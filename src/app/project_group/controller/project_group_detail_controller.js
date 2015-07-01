@@ -135,13 +135,13 @@ angular.module('sb.project_group').controller('ProjectGroupDetailController',
             );
         };
 
-        $scope.nextStories = function () {
-            $scope.storySearchOffset += $scope.storySearchLimit;
+        $scope.nextPage = function (offset) {
+            offset += pageSize;
             $scope.filterStories();
         };
 
-        $scope.previousStories = function () {
-            $scope.storySearchOffset -= $scope.storySearchLimit;
+        $scope.previousPage = function (offset) {
+            offset -= pageSize;
             $scope.filterStories();
         };
 

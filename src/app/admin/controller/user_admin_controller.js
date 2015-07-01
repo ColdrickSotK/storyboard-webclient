@@ -52,11 +52,14 @@ angular.module('sb.admin').controller('UserAdminController',
         /**
          * Execute a search.
          */
+        $scope.searchLimit = Preference.get('page_size');
         $scope.search = function () {
             var searchQuery = $scope.filterQuery || '';
 
             $scope.users = User.browse({
-                full_name: searchQuery
+                full_name: searchQuery,
+                offset: $scope.searchOffset,
+                limit: $scope.searchLimit
             }, function(results, headers) {
                 $scope.searchTotal =
                     parseInt(headers('X-Total')) || results.length;
@@ -71,6 +74,7 @@ angular.module('sb.admin').controller('UserAdminController',
         $scope.updatePageSize = function (value) {
             Preference.set('page_size', value).then(
                 function () {
+                    $scope.searchLimit = Preference.get('page_size');
                     $scope.search();
                 }
             );

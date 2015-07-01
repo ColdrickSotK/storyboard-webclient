@@ -23,8 +23,8 @@
                         offset="projectSearchOffset"
                         limit="projectSearchLimit"
                         minimal-pager="true"
-                        on-next-page="nextPage()"
-                        on-previous-page="previousPage()"
+                        on-next-page="nextPage(projectSearchOffset)"
+                        on-previous-page="previousPage(projectSearchOffset)"
                         on-page-size="updatePageSize(pageSize)"
                         ></result-set-pager>
             </div>
@@ -87,8 +87,8 @@
                         offset="storySearchOffset"
                         limit="storySearchLimit"
                         minimal-pager="true"
-                        on-next-page="nextStories()"
-                        on-previous-page="previousStories()"
+                        on-next-page="nextPage(storySearchOffset)"
+                        on-previous-page="previousPage(storySearchOffset)"
                         on-page-size="updatePageSize(pageSize)"
                         ></result-set-pager>
             </div>

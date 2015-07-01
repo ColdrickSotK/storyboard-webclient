@@ -53,15 +53,13 @@ angular.module('sb.story').controller('StoryDetailController',
                 var pref_name = 'display_events_' + type;
                 $scope[pref_name] = Preference.get(pref_name) === 'true';
             });
+            $scope.searchLimit = Preference.get('page_size');
+            $scope.loadEvents();
         }
-
-        reloadPagePreferences();
 
         /**
          * The events associated to the story
          */
-        var pageSize = Preference.get('page_size');
-        $scope.searchLimit = pageSize;
         $scope.searchOffset = 0;
         $scope.isSearching = false;
 
@@ -94,16 +92,25 @@ angular.module('sb.story').controller('StoryDetailController',
                 }
             );
         };
-        $scope.loadEvents();
+        reloadPagePreferences();
 
         $scope.nextPage = function () {
-            $scope.searchOffset += pageSize;
+            $scope.searchOffset += $scope.searchLimit;
             $scope.loadEvents();
         };
 
         $scope.previousPage = function () {
-            $scope.searchOffset -= pageSize;
+            $scope.searchOffset -= $scope.searchLimit;
             $scope.loadEvents();
+        };
+
+        $scope.updatePageSize = function (value) {
+            Preference.set('page_size', value).then(
+                function () {
+                    $scope.searchLimit = value;
+                    $scope.loadEvents();
+                }
+            );
         };
 
         /**
@@ -231,6 +238,7 @@ angular.module('sb.story').controller('StoryDetailController',
             });
 
             modalInstance.result.then(reloadPagePreferences);
+            $scope.searchLimit = Preference.get('page_size');
         };
 
         /**

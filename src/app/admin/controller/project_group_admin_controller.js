@@ -78,11 +78,15 @@ angular.module('sb.admin').controller('ProjectGroupAdminController',
         /**
          * Execute a search.
          */
+        $scope.searchOffset = 0;
+        $scope.searchLimit = Preference.get('page_size');
         $scope.search = function () {
             var searchQuery = $scope.filterQuery || '';
 
             $scope.projectGroups = ProjectGroup.browse({
-                title: searchQuery
+                title: searchQuery,
+                offset: $scope.searchOffset,
+                limit: $scope.searchLimit
             }, function(results, headers){
                 $scope.searchTotal =
                     parseInt(headers('X-Total')) || results.length;
@@ -97,6 +101,7 @@ angular.module('sb.admin').controller('ProjectGroupAdminController',
         $scope.updatePageSize = function (value) {
             Preference.set('page_size', value).then(
                 function () {
+                    $scope.searchLimit = Preference.get('page_size');
                     $scope.search();
                 }
             );

@@ -12,14 +12,14 @@
         <small ng-if="!!minimalPager">
             {{total == 0 ? 0 : offset + 1}}
             to
-            {{offset + (total > limit ? limit : total)}}
+            {{(total > limit + offset ? limit + offset : total)}}
             of
             {{total}}
         </small>
         <span ng-if="!minimalPager">
             {{total == 0 ? 0 : offset + 1}}
             to
-            {{offset + (total > limit ? limit : total)}}
+            {{(total > limit + offset ? limit + offset : total)}}
             of
             {{total}}
         </span>

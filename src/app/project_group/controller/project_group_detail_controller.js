@@ -19,8 +19,11 @@
  * projects, and any stories that belong under this project group.
  */
 angular.module('sb.project_group').controller('ProjectGroupDetailController',
-    function ($scope, projectGroup, projects, Story) {
+    function ($scope, $stateParams, projectGroup, Story, Project,
+              Preference) {
         'use strict';
+
+        var pageSize = Preference.get('page_size');
 
         /**
          * The project group we're viewing right now.
@@ -34,7 +37,39 @@ angular.module('sb.project_group').controller('ProjectGroupDetailController',
          *
          * @type [Project]
          */
-        $scope.projects = projects;
+        $scope.projects = [];
+        $scope.isSearchingProjects = false;
+
+        /**
+         * List the projects in this Project Group
+         */
+        $scope.listProjects = function () {
+            $scope.isSearchingProjects = true;
+            Project.browse({
+                    project_group_id: projectGroup.id,
+                    offset: $scope.projectSearchOffset,
+                    limit: pageSize
+                },
+                function (result, headers) {
+                    // Successful search results, apply the results to the
+                    // scope and unset our progress flag.
+                    $scope.projectCount =
+                        parseInt(headers('X-Total')) || result.length;
+                    $scope.projectSearchOffset =
+                        parseInt(headers('X-Offset')) || 0;
+                    $scope.projectSearchLimit =
+                        parseInt(headers('X-Limit')) || 0;
+                    $scope.projects = result;
+                    $scope.isSearchingProjects = false;
+                },
+                function (error) {
+                    // Error search results, show the error in the UI and
+                    // unset our progress flag.
+                    $scope.error = error;
+                    $scope.isSearchingProjects = false;
+                }
+            );
+        };
 
         /**
          * The list of stories in this project group
@@ -71,13 +106,45 @@ angular.module('sb.project_group').controller('ProjectGroupDetailController',
                 return;
             }
 
-            $scope.stories = Story.query({
-                project_group_id: projectGroup.id,
-                sort_field: 'id',
-                sort_dir: 'desc',
-                status: status
-            });
+            Story.browse({
+                    project_group_id: projectGroup.id,
+                    sort_field: 'id',
+                    sort_dir: 'desc',
+                    status: status,
+                    offset: $scope.storySearchOffset,
+                    limit: pageSize
+                },
+                function (result, headers) {
+                    // Successful search results, apply the results to the
+                    // scope and unset our progress flag.
+                    $scope.storyCount =
+                        parseInt(headers('X-Total')) || result.length;
+                    $scope.storySearchOffset =
+                        parseInt(headers('X-Offset')) || 0;
+                    $scope.storySearchLimit =
+                        parseInt(headers('X-Limit')) || 0;
+                    $scope.stories = result;
+                    $scope.isSearchingStories = false;
+                },
+                function (error) {
+                    // Error search results, show the error in the UI and
+                    // unset our progress flag.
+                    $scope.error = error;
+                    $scope.isSearchingStories = false;
+                }
+            );
         };
 
+        $scope.nextStories = function () {
+            $scope.storySearchOffset += $scope.storySearchLimit;
+            $scope.filterStories();
+        };
+
+        $scope.previousStories = function () {
+            $scope.storySearchOffset -= $scope.storySearchLimit;
+            $scope.filterStories();
+        };
+
+        $scope.listProjects();
         $scope.filterStories();
     });

@@ -20,7 +20,7 @@
  * @see ProjectListController
  */
 angular.module('sb.search').directive('searchResults',
-    function ($log, $parse, Criteria, $injector, Preference, ContributeModal) {
+    function ($log, $parse, Criteria, $injector, Preference) {
         'use strict';
 
         return {
@@ -52,15 +52,6 @@ angular.module('sb.search').directive('searchResults',
                  * @type {string}
                  */
                 $scope.sortDirection = 'asc';
-
-                /**
-                 * Help message.
-                 */
-                var helpMessage = 'Our api doesn\'t support paging yet. If ' +
-                    'you\'d like to see this feature, you can help by ' +
-                    'contributing to <a ' +
-                    'href="https://review.openstack.org/#/c/139638/" ' +
-                    'target="_blank">this specification</a>. Thanks!';
 
                 /**
                  * Handle error result.
@@ -121,6 +112,7 @@ angular.module('sb.search').directive('searchResults',
 
                     // Apply paging.
                     params.limit = pageSize;
+                    params.offset = $scope.searchOffset;
 
                     // If we don't actually have search criteria, issue a
                     // browse. Otherwise, issue a search.
@@ -171,14 +163,16 @@ angular.module('sb.search').directive('searchResults',
                  * Next page of the results.
                  */
                 $scope.nextPage = function () {
-                    ContributeModal.show(helpMessage);
+                    $scope.searchOffset += $scope.searchLimit;
+                    updateResults();
                 };
 
                 /**
                  * Previous page in the results.
                  */
                 $scope.previousPage = function () {
-                    ContributeModal.show(helpMessage);
+                    $scope.searchOffset -= $scope.searchLimit;
+                    updateResults();
                 };
 
                 // Watch for changing criteria

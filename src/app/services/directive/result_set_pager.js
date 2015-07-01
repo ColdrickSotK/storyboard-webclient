@@ -29,6 +29,7 @@ angular.module('sb.services').directive('resultSetPager',
                 total: '=',
                 offset: '=',
                 limit: '=',
+                minimalPager: '=',
                 pageSize: '&onPageSize',
                 nextPage: '&onNextPage',
                 previousPage: '&onPreviousPage'

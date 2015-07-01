@@ -19,8 +19,9 @@
  */
 angular.module('sb.story').controller('StoryDetailController',
     function ($log, $rootScope, $scope, $state, $stateParams, $modal, Session,
-              Preference, Event, Comment, TimelineEventTypes, story, Story,
-              creator, tasks, Task, DSCacheFactory, storyboardApiBase) {
+              Preference, TimelineEvent, Comment, TimelineEventTypes, story,
+              Story, creator, tasks, Task, DSCacheFactory, User,
+              storyboardApiBase) {
         'use strict';
 
         /**
@@ -59,12 +60,51 @@ angular.module('sb.story').controller('StoryDetailController',
         /**
          * The events associated to the story
          */
+        var pageSize = Preference.get('page_size');
+        $scope.searchLimit = pageSize;
+        $scope.searchOffset = 0;
+        $scope.isSearching = false;
+
         $scope.loadEvents = function () {
-            Event.search($scope.story.id).then(function (events) {
-                $scope.events = events;
-            });
+            $scope.isSearching = true;
+            var params = {};
+            params.sort_field = 'id';
+            params.sort_dir = 'asc';
+            params.story_id = $scope.story.id;
+            params.offset = $scope.searchOffset;
+            params.limit = $scope.searchLimit;
+
+            TimelineEvent.browse(params,
+                function (result, headers) {
+                    var eventResults = [];
+                    result.forEach(function (item) {
+                        item.author = User.get({id: item.author_id});
+                        item.event_info = JSON.parse(item.event_info);
+
+                        eventResults.push(item);
+                    });
+                    $scope.searchTotal = parseInt(headers('X-Total'));
+                    $scope.searchOffset = parseInt(headers('X-Offset'));
+                    $scope.searchLimit = parseInt(headers('X-Limit'));
+                    $scope.events = eventResults;
+                    $scope.isSearching = false;
+                },
+                function () {
+                    $scope.isSearching = false;
+                }
+            );
         };
         $scope.loadEvents();
+
+        $scope.nextPage = function () {
+            $scope.searchOffset += pageSize;
+            $scope.loadEvents();
+        };
+
+        $scope.previousPage = function () {
+            $scope.searchOffset -= pageSize;
+            $scope.loadEvents();
+        };
 
         /**
          * The new comment backing the input form.

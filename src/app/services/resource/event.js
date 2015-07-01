@@ -21,7 +21,7 @@
  * to stories.
  */
 angular.module('sb.services').factory('Event',
-    function ($q, $log, TimelineEvent, User) {
+    function ($q, $log, $scope, TimelineEvent, User) {
         'use strict';
 
         return {
@@ -32,16 +32,16 @@ angular.module('sb.services').factory('Event',
              * @param storyId   The id of the story to return events for.
              * @return An array with the matching events.
              */
-            search: function (storyId) {
+            search: function (storyId, offset, limit) {
                 var params = {};
                 params.sort_field = 'id';
                 params.sort_dir = 'asc';
                 params.story_id = storyId;
+                params.offset = offset;
+                params.limit = limit;
 
-                var deferred = $q.defer();
-
-                TimelineEvent.query(params,
-                    function (result) {
+                TimelineEvent.browse(params,
+                    function (result, headers) {
                         var eventResults = [];
                         result.forEach(function (item) {
                             item.author = User.get({id: item.author_id});
@@ -49,12 +49,13 @@ angular.module('sb.services').factory('Event',
 
                             eventResults.push(item);
                         });
-                        deferred.resolve(eventResults);
-                    }, function() {
-                        deferred.resolve([]);
-                    }
+                        $scope.searchTotal = parseInt(headers('X-Total'));
+                        $scope.searchOffset = parseInt(headers('X-Offset'));
+                        $scope.searchLimit = parseInt(headers('X-Limit'));
+                        $scope.events = eventResults;
+                    },
+                    function () {}
                 );
-                return deferred.promise;
             }
 
         };

@@ -215,6 +215,15 @@
             <a href ng-click="updateFilter()" ng-show="isLoggedIn"><i class="fa fa-gear"></i></a>
         </h4>
         <div class="discussion">
+            <result-set-pager
+                    class="form-control-static text-muted"
+                    total="searchTotal"
+                    offset="searchOffset"
+                    limit="searchLimit"
+                    on-next-page="nextPage()"
+                    on-previous-page="previousPage()"
+                    on-page-size="updatePageSize(pageSize)"
+                    ></result-set-pager>
             <div class="alert alert-warning"
                  ng-show="comments.length == 0">
                 The discussion hasn't started yet

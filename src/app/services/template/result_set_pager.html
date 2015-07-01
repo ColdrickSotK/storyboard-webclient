@@ -5,21 +5,32 @@
         <i class="fa fa-caret-left"></i>
     </a>
     <span ng-if="total == 0">
-        0 results.
+        <small ng-if="!!minimalPager">0 results.</small>
+        <span ng-if="!minimalPager">0 results.</span>
     </span>
     <span ng-if="total > 0">
-        {{total == 0 ? 0 : offset + 1}}
-        to
-        {{offset + (total > limit ? limit : total)}}
-        of
-        {{total}}
+        <small ng-if="!!minimalPager">
+            {{total == 0 ? 0 : offset + 1}}
+            to
+            {{offset + (total > limit ? limit : total)}}
+            of
+            {{total}}
+        </small>
+        <span ng-if="!minimalPager">
+            {{total == 0 ? 0 : offset + 1}}
+            to
+            {{offset + (total > limit ? limit : total)}}
+            of
+            {{total}}
+        </span>
     </span>
     <a class="btn btn-link btn-xs"
        ng-class="{'disabled': offset + limit >= total}"
             ng-click="nextPage({})">
         <i class="fa fa-caret-right"></i>
     </a>
-    <span class="btn-group" dropdown>
+    <span class="btn-group" dropdown
+          ng-if="!minimalPager">
         <div>
             <button class="btn btn-xs btn-default"
                     dropdown-toggle>

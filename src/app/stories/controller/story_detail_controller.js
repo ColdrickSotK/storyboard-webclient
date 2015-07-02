@@ -53,7 +53,7 @@ angular.module('sb.story').controller('StoryDetailController',
                 var pref_name = 'display_events_' + type;
                 $scope[pref_name] = Preference.get(pref_name) === 'true';
             });
-            $scope.searchLimit = Preference.get('page_size');
+            $scope.searchLimit = Preference.get('story_detail_page_size');
             $scope.loadEvents();
         }
 
@@ -105,7 +105,7 @@ angular.module('sb.story').controller('StoryDetailController',
         };
 
         $scope.updatePageSize = function (value) {
-            Preference.set('page_size', value).then(
+            Preference.set('story_detail_page_size', value).then(
                 function () {
                     $scope.searchLimit = value;
                     $scope.loadEvents();
@@ -238,7 +238,7 @@ angular.module('sb.story').controller('StoryDetailController',
             });
 
             modalInstance.result.then(reloadPagePreferences);
-            $scope.searchLimit = Preference.get('page_size');
+            $scope.searchLimit = Preference.get('story_detail_page_size');
         };
 
         /**

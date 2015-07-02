@@ -23,7 +23,10 @@ angular.module('sb.project_group').controller('ProjectGroupDetailController',
               Preference) {
         'use strict';
 
-        var pageSize = Preference.get('page_size');
+        var projectPageSize = Preference.get(
+            'project_group_detail_projects_page_size') || 0;
+        var storyPageSize = Preference.get(
+            'project_group_detail_stories_page_size') || 0;
 
         /**
          * The project group we're viewing right now.
@@ -48,7 +51,7 @@ angular.module('sb.project_group').controller('ProjectGroupDetailController',
             Project.browse({
                     project_group_id: projectGroup.id,
                     offset: $scope.projectSearchOffset,
-                    limit: pageSize
+                    limit: projectPageSize
                 },
                 function (result, headers) {
                     // Successful search results, apply the results to the
@@ -112,7 +115,7 @@ angular.module('sb.project_group').controller('ProjectGroupDetailController',
                     sort_dir: 'desc',
                     status: status,
                     offset: $scope.storySearchOffset,
-                    limit: pageSize
+                    limit: storyPageSize
                 },
                 function (result, headers) {
                     // Successful search results, apply the results to the
@@ -135,13 +138,21 @@ angular.module('sb.project_group').controller('ProjectGroupDetailController',
             );
         };
 
-        $scope.nextPage = function (offset) {
-            offset += pageSize;
+        $scope.nextPage = function (type) {
+            if (type === 'stories') {
+                $scope.storySearchOffset += storyPageSize;
+            } else if (type === 'projects') {
+                $scope.projectSearchOffset += projectPageSize;
+            }
             $scope.filterStories();
         };
 
-        $scope.previousPage = function (offset) {
-            offset -= pageSize;
+        $scope.previousPage = function (type) {
+            if (type === 'stories') {
+                $scope.storySearchOffset -= storyPageSize;
+            } else if (type === 'projects') {
+                $scope.projectSearchOffset -= projectPageSize;
+            }
             $scope.filterStories();
         };
 

@@ -34,7 +34,7 @@ angular.module('sb.projects').controller('ProjectStoryListController',
             return;
         }
 
-        var pageSize = Preference.get('page_size');
+        var pageSize = Preference.get('project_detail_page_size');
 
         // Variables and methods available to the template...
         function resetScope() {

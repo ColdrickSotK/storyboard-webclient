@@ -24,6 +24,8 @@ angular.module('sb.story').controller('StoryDetailController',
               storyboardApiBase) {
         'use strict';
 
+        var pageSize = Preference.get('story_detail_page_size');
+
         /**
          * The story, resolved in the state.
          *
@@ -53,7 +55,7 @@ angular.module('sb.story').controller('StoryDetailController',
                 var pref_name = 'display_events_' + type;
                 $scope[pref_name] = Preference.get(pref_name) === 'true';
             });
-            $scope.searchLimit = Preference.get('story_detail_page_size');
+            pageSize = Preference.get('story_detail_page_size');
             $scope.loadEvents();
         }
 
@@ -70,7 +72,7 @@ angular.module('sb.story').controller('StoryDetailController',
             params.sort_dir = 'asc';
             params.story_id = $scope.story.id;
             params.offset = $scope.searchOffset;
-            params.limit = $scope.searchLimit;
+            params.limit = pageSize;
 
             TimelineEvent.browse(params,
                 function (result, headers) {
@@ -95,19 +97,22 @@ angular.module('sb.story').controller('StoryDetailController',
         reloadPagePreferences();
 
         $scope.nextPage = function () {
-            $scope.searchOffset += $scope.searchLimit;
+            $scope.searchOffset += pageSize;
             $scope.loadEvents();
         };
 
         $scope.previousPage = function () {
-            $scope.searchOffset -= $scope.searchLimit;
+            $scope.searchOffset -= pageSize;
+            if ($scope.searchOffset < 0) {
+                $scope.searchOffset = 0;
+            }
             $scope.loadEvents();
         };
 
         $scope.updatePageSize = function (value) {
             Preference.set('story_detail_page_size', value).then(
                 function () {
-                    $scope.searchLimit = value;
+                    pageSize = value;
                     $scope.loadEvents();
                 }
             );

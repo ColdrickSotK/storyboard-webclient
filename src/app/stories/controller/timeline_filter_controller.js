@@ -23,7 +23,6 @@ angular.module('sb.story').controller('TimelineFilterController',
                 var pref_name = 'display_events_' + type;
                 $scope[pref_name] = Preference.get(pref_name);
             });
-            $scope.preferences = Preference.getAll();
         }
 
         $scope.close = function () {
@@ -32,7 +31,6 @@ angular.module('sb.story').controller('TimelineFilterController',
 
         $scope.save = function () {
 
-            Preference.saveAll($scope.preferences);
             TimelineEventTypes.forEach(function (type) {
                 var pref_name = 'display_events_' + type;
                 var old_value = Preference.get(pref_name);

@@ -29,8 +29,8 @@
             ng-click="nextPage({})">
         <i class="fa fa-caret-right"></i>
     </a>
-    <span class="btn-group" dropdown
-          ng-if="!minimalPager">
+    <br ng-if="!!minimalPager" />
+    <span class="btn-group" dropdown>
         <div>
             <button class="btn btn-xs btn-default"
                     dropdown-toggle>
@@ -41,7 +41,7 @@
             <li class="dropdown-header"># of results</li>
             <li ng-repeat="size in [10,25,50,100]"
                 ng-class="{'active': size == limit}">
-                <a ng-click="pageSize({'pageSize':size})">{{size}}</a>
+                <a ng-click="pageSize({'type':listType, 'pageSize':size})">{{size}}</a>
             </li>
         </ul>
     </span>

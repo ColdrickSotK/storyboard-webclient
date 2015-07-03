@@ -163,7 +163,7 @@ angular.module('sb.search').directive('searchResults',
                  * Next page of the results.
                  */
                 $scope.nextPage = function () {
-                    $scope.searchOffset += $scope.searchLimit;
+                    $scope.searchOffset += pageSize;
                     updateResults();
                 };
 
@@ -171,7 +171,10 @@ angular.module('sb.search').directive('searchResults',
                  * Previous page in the results.
                  */
                 $scope.previousPage = function () {
-                    $scope.searchOffset -= $scope.searchLimit;
+                    $scope.searchOffset -= pageSize;
+                    if ($scope.searchOffset < 0) {
+                        $scope.searchOffset = 0;
+                    }
                     updateResults();
                 };
 

@@ -150,11 +150,38 @@ angular.module('sb.project_group').controller('ProjectGroupDetailController',
         $scope.previousPage = function (type) {
             if (type === 'stories') {
                 $scope.storySearchOffset -= storyPageSize;
+                if ($scope.storySearchOffset < 0) {
+                    $scope.storySearchOffset = 0;
+                }
             } else if (type === 'projects') {
                 $scope.projectSearchOffset -= projectPageSize;
+                if ($scope.projectSearchOffset < 0) {
+                    $scope.projectSearchOffset = 0;
+                }
             }
             $scope.filterStories();
         };
+
+        $scope.updatePageSize = function (type, value) {
+            if (type === 'stories') {
+                Preference.set(
+                    'project_group_detail_stories_page_size', value).then(
+                        function () {
+                            storyPageSize = value;
+                            $scope.filterStories();
+                        }
+                    );
+            } else if (type === 'projects') {
+                Preference.set(
+                    'project_group_detail_projects_page_size', value).then(
+                        function () {
+                            projectPageSize = value;
+                            $scope.filterStories();
+                        }
+                    );
+            }
+        };
+
 
         $scope.listProjects();
         $scope.filterStories();

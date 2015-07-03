@@ -23,9 +23,10 @@
                         offset="projectSearchOffset"
                         limit="projectSearchLimit"
                         minimal-pager="true"
+                        list-type="'projects'"
                         on-next-page="nextPage('projects')"
                         on-previous-page="previousPage('projects')"
-                        on-page-size="updatePageSize(pageSize)"
+                        on-page-size="updatePageSize(type, pageSize)"
                         ></result-set-pager>
             </div>
         </div>
@@ -86,10 +87,11 @@
                         total="storyCount"
                         offset="storySearchOffset"
                         limit="storySearchLimit"
+                        list-type="'stories'"
                         minimal-pager="true"
                         on-next-page="nextPage('stories')"
                         on-previous-page="previousPage('stories')"
-                        on-page-size="updatePageSize(pageSize)"
+                        on-page-size="updatePageSize(type, pageSize)"
                         ></result-set-pager>
             </div>
         </div>

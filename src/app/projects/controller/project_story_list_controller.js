@@ -109,6 +109,9 @@ angular.module('sb.projects').controller('ProjectStoryListController',
 
         $scope.previousPage = function () {
             $scope.searchOffset -= pageSize;
+            if ($scope.searchOffset < 0) {
+                $scope.searchOffset = 0;
+            }
             $scope.search();
         };
 

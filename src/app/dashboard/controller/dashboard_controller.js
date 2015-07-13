@@ -27,6 +27,27 @@ angular.module('sb.dashboard').controller('DashboardController',
             status: 'active'
         });
 
+        $scope.priorityLists = [
+            Story.browse({
+                assignee_id: currentUser.id,
+                status: 'active'
+            }),
+            Story.browse({
+                status: 'merged'
+            }),
+            Story.browse({
+                status: 'invalid'
+            }),
+            Story.browse({
+                assignee_id: currentUser.id,
+                status: 'active'
+            }),
+            Story.browse({
+                assignee_id: currentUser.id,
+                status: 'active'
+            })
+        ];
+
         function loadEvents() {
             // Load the user's subscription events.
             $scope.subscriptionEvents = null;

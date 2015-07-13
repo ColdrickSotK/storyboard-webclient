@@ -33,12 +33,29 @@ angular.module('sb.dashboard',
                 }
             })
             .state('sb.dashboard', {
+                abstract: true,
                 url: '/dashboard',
-                templateUrl: 'app/dashboard/template/dashboard.html',
-                controller: 'DashboardController',
                 resolve: {
-                    sessionState: SessionResolver.requireLoggedIn,
+                    sessionState: SessionResolver.resolveSessionState,
                     currentUser: SessionResolver.requireCurrentUser
+                },
+                views: {
+                    'submenu@': {
+                        templateUrl: 'app/dashboard/template/submenu.html'
+                    },
+                    '@': {
+                        template: '<div ui-view></div>'
+                    }
                 }
+            })
+            .state('sb.dashboard.home', {
+                url: '/home',
+                controller: 'DashboardController',
+                templateUrl: 'app/dashboard/template/dashboard.html'
+            })
+            .state('sb.dashboard.priorities', {
+                url: '/priorities',
+                controller: 'DashboardController',
+                templateUrl: 'app/dashboard/template/priorities.html'
             });
     });

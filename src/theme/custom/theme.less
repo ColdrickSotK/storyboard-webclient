@@ -114,3 +114,48 @@
 @input-height-h4:             (ceil(@font-size-h4 * @line-height-base) + (@padding-base-vertical * 2));
 @input-height-h5:             (ceil(@font-size-h5 * @line-height-base) + (@padding-base-vertical * 2));
 @input-height-h6:             (ceil(@font-size-h6 * @line-height-base) + (@padding-base-vertical * 2));
+
+.kanban-lane {
+    padding: 10px;
+    margin: 0px 10px;
+    background-color: #ddd;
+    border-radius: @border-radius-base;
+    border: 1px solid #bbb;
+}
+
+.btn-kanban-lane:hover {
+    background-color: #eee;
+}
+
+.btn-kanban-link {
+    &:extend(.btn);
+    &:extend(.btn-link);
+    padding: 0px;
+    margin: 0px;
+    border: none;
+}
+
+.kanban-card {
+    padding: 5px;
+    margin: 5px 0px;
+    background-color: #fff;
+    cursor: move;
+    text-align: left;
+    border-radius: @border-radius-base;
+    border: 1px solid #bbb;
+}
+
+.kanban-lane.ui-sortable-helper {
+    box-shadow: 5px 5px 10px #999;
+    margin: none;
+    padding: none;
+}
+
+.kanban-card-placeholder {
+    background-color: #999;
+    border-radius: @border-radius-base;
+}
+
+.kanban-lane-contents {
+    padding: 5px 0px;
+}

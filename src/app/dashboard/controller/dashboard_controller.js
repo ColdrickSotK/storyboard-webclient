@@ -28,24 +28,38 @@ angular.module('sb.dashboard').controller('DashboardController',
         });
 
         $scope.priorityLists = [
-            Story.browse({
-                assignee_id: currentUser.id,
-                status: 'active'
-            }),
-            Story.browse({
-                status: 'merged'
-            }),
-            Story.browse({
-                status: 'invalid'
-            }),
-            Story.browse({
-                assignee_id: currentUser.id,
-                status: 'active'
-            }),
-            Story.browse({
-                assignee_id: currentUser.id,
-                status: 'active'
-            })
+            {
+                title: 'Active',
+                contents: Story.browse({
+                     status: 'active'
+                })
+            },
+            {
+                title: 'Merged',
+                contents: Story.browse({
+                    status: 'merged'
+                })
+            },
+            {
+                title: 'Invalid',
+                contents: Story.browse({
+                    status: 'invalid'
+                })
+            },
+            {
+                title: 'Active (owned by me)',
+                contents: Story.browse({
+                    assignee_id: currentUser.id,
+                    status: 'active'
+                })
+            },
+            {
+                title: 'Merged (owned by me)',
+                contents: Story.browse({
+                    assignee_id: currentUser.id,
+                    status: 'merged'
+                })
+            }
         ];
 
         function loadEvents() {

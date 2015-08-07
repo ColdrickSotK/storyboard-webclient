@@ -22,12 +22,10 @@
             'kanban-card-placeholder', forcePlaceholderSize: true}"
                  ng-model="priorities.contents"
                  class="kanban-lane-contents">
-                <div ng-repeat="story in priorities.contents">
-                    <div class="kanban-card">
-                        <a href="#!/story/{{story.id}}">
-                            {{story.title}}
-                        </a>
-                    </div>
+                <div ng-repeat="story in priorities.contents" class="kanban-card">
+                    <a href="#!/story/{{story.id}}">
+                        {{story.title}}
+                    </a>
                 </div>
             </div>
             <div class="text-center text-muted">

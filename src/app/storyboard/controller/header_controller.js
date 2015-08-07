@@ -21,7 +21,7 @@
 angular.module('storyboard').controller('HeaderController',
     function ($q, $scope, $rootScope, $state, NewStoryService, Session,
               SessionState, CurrentUser, Criteria, Notification, Priority,
-              Project, Story, ProjectGroup) {
+              Project, Story, ProjectGroup, NewWorklistService) {
         'use strict';
 
         function resolveCurrentUser() {
@@ -52,6 +52,10 @@ angular.module('storyboard').controller('HeaderController',
                     $state.go('sb.story.detail', {storyId: story.id});
                 }
             );
+        };
+
+        $scope.newWorklist = function () {
+            NewWorklistService.showNewWorklistModal();
         };
 
         /**

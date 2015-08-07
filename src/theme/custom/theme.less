@@ -115,6 +115,10 @@
 @input-height-h5:             (ceil(@font-size-h5 * @line-height-base) + (@padding-base-vertical * 2));
 @input-height-h6:             (ceil(@font-size-h6 * @line-height-base) + (@padding-base-vertical * 2));
 
+
+/**
+ *  Kanban Styling
+ */
 .kanban-lane {
     padding: 10px;
     margin: 0px 10px;
@@ -157,5 +161,73 @@
 }
 
 .kanban-lane-contents {
+    min-height: 20px;
     padding: 5px 0px;
+}
+
+
+/**
+ *  Worklist example styling
+ */
+.hover-row:hover {
+    cursor: pointer;
+}
+
+/* ************************************** */
+/* Mandatory CSS required for ng-sortable */
+/* ************************************** */
+
+.as-sortable-item, .as-sortable-placeholder {
+}
+
+.as-sortable-item {
+    -ms-touch-action: none;
+    touch-action: none;
+}
+
+.as-sortable-item-handle {
+    cursor: move;
+}
+
+.as-sortable-placeholder {
+}
+
+.as-sortable-drag {
+    position: absolute;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.as-sortable-hidden {
+    display: none !important;
+}
+
+.as-sortable-un-selectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* ******************************************* */
+/* Optional CSS, default style for ng-sortable */
+/* ******************************************* */
+
+.as-sortable-item {
+    background-color: #ffffff;
+}
+
+.as-sortable-item-handle {
+}
+
+.as-sortable-placeholder {
+    border: 1px dashed darkgrey;
+    box-sizing: border-box;
+    background-color: #dbdbdb;
+}
+
+
+.as-sortable-hidden {
 }

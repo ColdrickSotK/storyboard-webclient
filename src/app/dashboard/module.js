@@ -53,9 +53,14 @@ angular.module('sb.dashboard',
                 controller: 'DashboardController',
                 templateUrl: 'app/dashboard/template/dashboard.html'
             })
-            .state('sb.dashboard.priorities', {
-                url: '/priorities',
+            .state('sb.dashboard.kanban', {
+                url: '/kanban',
                 controller: 'DashboardController',
-                templateUrl: 'app/dashboard/template/priorities.html'
+                templateUrl: 'app/dashboard/template/kanban.html'
+            })
+            .state('sb.dashboard.worklists', {
+                url: '/worklists',
+                controller: 'DashboardWorklistsController',
+                templateUrl: 'app/dashboard/template/worklists.html'
             });
     });

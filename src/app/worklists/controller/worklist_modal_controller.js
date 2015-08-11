@@ -18,7 +18,7 @@
  * Controller for the "new worklist" modal popup.
  */
 angular.module('sb.worklist').controller('WorklistModalController',
-    function ($scope, $modalInstance, params, Worklist) {
+    function ($scope, $modalInstance, params, Worklist, Project) {
         'use strict';
 
         $scope.worklist = new Worklist({title: ''});
@@ -36,5 +36,28 @@ angular.module('sb.worklist').controller('WorklistModalController',
         $scope.close = function () {
             $modalInstance.dismiss('cancel');
         };
-    })
-;
+
+        /**
+         * Project typeahead search method.
+         */
+        $scope.searchProjects = function (value) {
+            return Project.browse({name: value, limit: 10}).$promise;
+        };
+
+        /**
+         * Formats the project name.
+         */
+        $scope.formatProjectName = function (model) {
+            if (!!model) {
+                return model.name;
+            }
+            return '';
+        };
+
+        /**
+         * Select a new project.
+         */
+        $scope.selectNewProject = function (model) {
+            $scope.worklist.project_id = model.id;
+        };
+    });

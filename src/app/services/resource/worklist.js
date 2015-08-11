@@ -36,14 +36,11 @@ angular.module('sb.services').factory('Worklist',
             },
             'get': {
                 method: 'GET',
-                cache: true,
+                cache: false,
                 isArray: true
             },
             'update': {
-                method: 'PUT',
-                transformRequest: function() {
-                    return '';
-                }
+                method: 'PUT'
             },
             'delete': {
                 method: 'DELETE',
@@ -54,7 +51,8 @@ angular.module('sb.services').factory('Worklist',
         };
 
         resource.ItemsController = $resource(
-            storyboardApiBase + '/worklists/:id/items/', {id: '@id'},
+            storyboardApiBase + '/worklists/:id/items/:item_id',
+            {id: '@id', item_id: '@item_id'},
             items_signature);
 
         ResourceFactory.applySearch(

@@ -153,7 +153,7 @@ angular.module('sb.dashboard').controller('DashboardWorklistsController',
             }).$promise.finally(loadWorklists);
         };
 
-        $scope.remove = function (worklist) {
+        function showDeleteModal(worklist) {
             var modalInstance = $modal.open({
                 templateUrl: 'app/dashboard/template/worklist_delete.html',
                 controller: 'WorklistDeleteController',
@@ -167,4 +167,8 @@ angular.module('sb.dashboard').controller('DashboardWorklistsController',
             // Return the modal's promise.
             return modalInstance.result;
         };
+
+        $scope.remove = function(worklist) {
+            showDeleteModal(worklist).finally(loadWorklists);
+        }
     });

@@ -16,28 +16,65 @@
                 <thead>
                     <th>
                         {{worklist.title}}
+                        <a href ng-click="toggleEditMode(worklist)">
+                            <i class="fa fa-pencil"></i>
+                        </a>
                         <button type="button" class="close" title="Delete"
                                 ng-click="remove(worklist)">
                             &times;
                         </button>
                     </th>
                 </thead>
-                <tbody as-sortable="sortableOptions" ng-model="worklist.items">
-                    <tr as-sortable-item ng-repeat="item in worklist.items | orderBy:'position'">
+                <tbody as-sortable="sortableOptions" ng-model="worklist.items"
+                       ng-show="!worklist.editing">
+                    <tr as-sortable-item ng-repeat="item in worklist.items">
                         <td as-sortable-item-handle ng-switch="item.type" class="hover-row"
                             title="{{item.type}}: {{item.title}}">
                             <a href="#!/story/{{item.value}}" ng-switch-when="story">
                                 <div class="col-sm-2">
                                     <i class="fa fa-sb-story text-muted"></i>
                                 </div>
-                                <div class="col-sm-10">{{item.title}}</div>
+                                <div class="col-sm-10">
+                                    {{item.title}}
+                                </div>
                             </a>
                             <a href="#!/story/{{item.story_id}}" ng-switch-when="task">
                                 <div class="col-sm-2">
                                     <i class="fa fa-tasks text-muted"></i>
                                 </div>
-                                <div class="col-sm-10">{{item.title}}</div>
+                                <div class="col-sm-10">
+                                    {{item.title}}
+                                </div>
                             </a>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody ng-show="worklist.editing">
+                    <tr ng-repeat="item in worklist.items">
+                        <td ng-switch="item.type" class="hover-row"
+                            title="{{item.type}}: {{item.title}}">
+                            <a href="#!/story/{{item.value}}" ng-switch-when="story">
+                                <div class="col-sm-2">
+                                    <i class="fa fa-sb-story text-muted"></i>
+                                </div>
+                                <div class="col-sm-8">
+                                    {{item.title}}
+                                </div>
+                            </a>
+                            <a href="#!/story/{{item.story_id}}" ng-switch-when="task">
+                                <div class="col-sm-2">
+                                    <i class="fa fa-tasks text-muted"></i>
+                                </div>
+                                <div class="col-sm-8">
+                                    {{item.title}}
+                                </div>
+                            </a>
+                            <div class="col-sm-2">
+                                <button type="button" class="close" title="Remove"
+                                   ng-click="removeItem(worklist, item)">
+                                    &times;
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -52,12 +89,11 @@
                     <tr class="hover-row text-center" title="Add Item"
                         ng-click="addItem(worklist)">
                         <td>
-                            Add Item
+                            Add Items
                         </td>
                     </tr>
                 </tbody>
             </table>
-            {{index}}
         </div>
     </div>
 </div>

@@ -30,6 +30,7 @@ angular.module('sb.worklist').controller('WorklistAddItemController',
         $scope.error = {};
 
         $scope.save = function() {
+            var offset = $scope.worklist.items.length;
             for (var i = 0; i < $scope.items.length; i++) {
                 var item = $scope.items[i];
                 var item_type = '';
@@ -43,7 +44,7 @@ angular.module('sb.worklist').controller('WorklistAddItemController',
                 var params = {
                     item_id: item.value,
                     id: $scope.worklist.id,
-                    list_position: i,
+                    list_position: offset + i,
                     item_type: item_type
                 };
 
@@ -74,9 +75,7 @@ angular.module('sb.worklist').controller('WorklistAddItemController',
             ];
 
             $q.all(searches).then(function (searchResults) {
-                var criteria = [
-                    Criteria.create('Text', searchString)
-                ];
+                var criteria = [];
 
                 var addResult = function (item) {
                     criteria.push(item);

@@ -18,14 +18,18 @@
  * A controller that manages the worklist test area
  */
 angular.module('sb.dashboard').controller('DashboardWorklistsController',
-    function ($scope, $modal, currentUser, Worklist, Task, Story) {
+    function ($scope, $modal, $timeout, currentUser, Worklist, Task, Story) {
         'use strict';
 
         function addItem(list, listitem) {
             return function(item) {
+                item.list_item_id = listitem.id;
                 item.type = listitem.item_type;
                 item.position = listitem.list_position;
                 list.push(item);
+                list.sort(function(a, b) {
+                    return a.position - b.position;
+                });
             };
         }
 
@@ -48,7 +52,6 @@ angular.module('sb.dashboard').controller('DashboardWorklistsController',
             };
         }
 
-        // Load the worklists.
         function handleSearchResult(results) {
             $scope.worklists = results;
             for (var i = 0; i < results.length; i++) {
@@ -59,21 +62,72 @@ angular.module('sb.dashboard').controller('DashboardWorklistsController',
                 }).$promise.then(resolver);
             }
         }
-        var params = {creator_id: currentUser.id};
-        Worklist.browse(params, handleSearchResult);
 
-        $scope.index = 'none';
+        function loadWorklists() {
+            var params = {creator_id: currentUser.id};
+            Worklist.browse(params, handleSearchResult);
+        }
+
+        // Load the worklists.
+        loadWorklists();
+
+        function saveWorklistItems(worklist) {
+            for (var i = 0; i < worklist.items.length; i++) {
+                var item = worklist.items[i];
+                Worklist.ItemsController.update({
+                    id: worklist.id,
+                    item_id: item.list_item_id,
+                    list_position: item.position
+                });
+            }
+        }
+
+        $scope.toggleEditMode = function(worklist) {
+            if (!worklist.editing) {
+                worklist.editing = true;
+            } else {
+                worklist.editing = false;
+            }
+        };
+
         $scope.sortableOptions = {
             accept: function (sourceHandle, dest) {
                 return sourceHandle.itemScope.sortableScope.$id === dest.$id;
             },
             orderChanged: function (e) {
-                var new_index = e.dest.index;
-                e.source.itemScope.item.position = new_index;
+                var new_pos = e.dest.index;
+                var old_pos = e.source.index;
+                var worklist = e.dest.sortableScope.worklist;
+                var i = 0;
+                var item = {};
+                $scope.old_pos = old_pos;
+                $scope.new_pos = new_pos;
+                if (new_pos > old_pos) {  // item moved down list
+                    for (i = 0; i < worklist.items.length; i++) {
+                        item = worklist.items[i];
+                        if (item.position > old_pos &&
+                            item.position <= new_pos) {
+                            item.position--;
+                        }
+                    }
+                } else if (old_pos > new_pos) {  // item moved up list
+                    for (i = 0; i < worklist.items.length; i++) {
+                        item = worklist.items[i];
+                        if (item.position < old_pos &&
+                            item.position >= new_pos) {
+                            item.position++;
+                        }
+                    }
+                }
+                e.source.itemScope.item.position = new_pos;
+                worklist.items.sort(function (a, b) {
+                    return a.position - b.position;
+                });
+                saveWorklistItems(worklist);
             }
         };
 
-        $scope.addItem = function(worklist) {
+        function showAddItemModal(worklist) {
             var modalInstance = $modal.open({
                 templateUrl: 'app/worklists/template/additem.html',
                 controller: 'WorklistAddItemController',
@@ -85,6 +139,18 @@ angular.module('sb.dashboard').controller('DashboardWorklistsController',
             });
 
             return modalInstance.result;
+        }
+
+        $scope.addItem = function(worklist) {
+            showAddItemModal(worklist).finally(loadWorklists);
+        };
+
+        $scope.removeItem = function(worklist, item) {
+            $scope.worklists = [];
+            Worklist.ItemsController.delete({
+                id: worklist.id,
+                item_id: item.list_item_id
+            }).$promise.finally(loadWorklists);
         };
 
         $scope.remove = function (worklist) {

@@ -55,7 +55,11 @@ angular.module('storyboard').controller('HeaderController',
         };
 
         $scope.newWorklist = function () {
-            NewWorklistService.showNewWorklistModal();
+            NewWorklistService.showNewWorklistModal()
+                .then(function () {
+                    $state.go('sb.dashboard.worklist');
+                }
+            );
         };
 
         /**

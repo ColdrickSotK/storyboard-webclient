@@ -18,7 +18,7 @@
  * Controller for the "new worklist" modal popup.
  */
 angular.module('sb.worklist').controller('WorklistModalController',
-    function ($scope, $modalInstance, params, Worklist, Project) {
+    function ($scope, $modalInstance, $state, params, Worklist, Project) {
         'use strict';
 
         $scope.worklist = new Worklist({title: ''});
@@ -27,7 +27,12 @@ angular.module('sb.worklist').controller('WorklistModalController',
          * Saves the worklist.
          */
         $scope.save = function () {
-            $scope.worklist.$create();
+            $scope.worklist.$create(
+                function () {
+                    $modalInstance.dismiss('success');
+                    $state.go('sb.dashboard.worklist');
+                }
+            );
         };
 
         /**

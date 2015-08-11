@@ -166,9 +166,9 @@ angular.module('sb.dashboard').controller('DashboardWorklistsController',
 
             // Return the modal's promise.
             return modalInstance.result;
-        };
+        }
 
         $scope.remove = function(worklist) {
             showDeleteModal(worklist).finally(loadWorklists);
-        }
+        };
     });

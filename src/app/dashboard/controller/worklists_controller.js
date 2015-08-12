@@ -82,11 +82,19 @@ angular.module('sb.dashboard').controller('DashboardWorklistsController',
             }
         }
 
+        function saveWorklist(worklist) {
+            Worklist.update({
+                id: worklist.id,
+                title: worklist.title
+            });
+        }
+
         $scope.toggleEditMode = function(worklist) {
             if (!worklist.editing) {
                 worklist.editing = true;
             } else {
                 worklist.editing = false;
+                saveWorklist(worklist);
             }
         };
 

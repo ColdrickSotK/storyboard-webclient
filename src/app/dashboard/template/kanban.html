@@ -1,38 +1,193 @@
 <div class="container-fluid">
+    <div ng-include
+         src="'/inline/board_detail.html'"
+         ng-hide="showEditForm">
+    </div>
+    <hr ng-show="showEditForm">
+    <div ng-include
+         src="'/inline/edit_board.html'"
+         ng-show="showEditForm">
+    </div>
+    <hr>
+    <div ng-include src="'/inline/kanban_lanes.html'"></div>
+</div>
+
+
+<!-- Template for the header and description -->
+<script type="text/ng-template" id="/inline/board_detail.html">
     <div class="row">
         <div class="col-sm-12">
-            <button class="btn btn-primary btn-sm pull-bottom-right">
-                Edit Board
-            </button>
-            <h1 class="no-margin-bottom">Kanban test</h1>
+            <h1 class="no-margin-bottom">
+                {{board.title}}
+                <small>
+                    <a ng-click="toggleEditMode()"
+                       ng-show="isLoggedIn">
+                        <i class="fa fa-pencil"></i>
+                    </a>
+                </small>
+            </h1>
         </div>
         <div class="col-sm-12">
             <p class="text-muted">
-                This is a mockup of a potential kanban view. Any changes made will not be permanent.
-                Adding cards is not yet possible, but both cards and lanes can be rearranged. None
-                of the buttons on this screen will work yet.
+                {{board.description}}
             </p>
         </div>
     </div>
-    <div class="row" ui-sortable ng-model="priorityLists">
-        <div class="col-sm-2 kanban-lane" ng-repeat="priorities in priorityLists">
-            <a class="btn-kanban-link pull-right"><i class="fa fa-plus"></i></a>
-            {{ priorities.title }}
-            <div ui-sortable="{connectWith: '.kanban-lane-contents', placeholder:
-            'kanban-card-placeholder', forcePlaceholderSize: true}"
-                 ng-model="priorities.contents"
+</script>
+
+
+<!-- Template for the edit form -->
+<script type="text/ng-template" id="/inline/edit_board.html">
+    <div class="row">
+        <div class="col-sm-12">
+            <form name="boardForm" role="form" class="form-horizontal">
+                <div class="form-group">
+                    <label for="title" class="col-sm-2 control-label">
+                        Title
+                    </label>
+                    <div class="col-sm-10">
+                        <input id="title"
+                               focus
+                               type="text"
+                               class="form-control"
+                               ng-model="board.title"
+                               required
+                               maxlength="100"
+                               placeholder="Board title">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description"
+                           class="col-sm-2 control-label">
+                        Description
+                    </label>
+                    <div class="col-sm-10">
+                        <textarea id="description"
+                                  class="form-control"
+                                  ng-model="board.description"
+                                  msd-elastic
+                                  placeholder="A short description of the board's purpose.">
+                        </textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="project" class="col-sm-2 control-label">
+                        Project
+                    </label>
+                    <div class="has-feedback col-sm-10">
+                        <input id="project"
+                               type="text"
+                               placeholder="Select a Project"
+                               ng-model="asyncProject"
+                               typeahead-wait-ms="200"
+                               typeahead-editable="false"
+                               typeahead="project as project.name for project
+                               in searchProjects($viewValue)"
+                               typeahead-loading="loadingProjects"
+                               typeahead-input-formatter="formatProjectName($model)"
+                               typeahead-on-select="selectNewProject($model)"
+                               class="form-control"
+                                />
+                        <span class="form-control-feedback text-muted
+                        form-control-feedback-sm">
+                            <i class="fa fa-refresh fa-spin" ng-show="loadingProjects"></i>
+                            <i class="fa fa-search" ng-hide="loadingProjects"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="private" class="col-sm-2 control-label">
+                        Private
+                    </label>
+                    <div class="col-sm-10 checkbox">
+                        <!-- TODO(SotK): stylesheet sotk -->
+                        <input id="private"
+                               type="checkbox"
+                               ng-model="board.private"
+                               style="margin-left: 0px;"
+                                />
+                    </div>
+                </div>
+
+                <div class="clearfix">
+                    <div class="pull-right">
+                        <div class="btn" ng-show="isUpdating">
+                            <i class="fa fa-spinner fa-lg fa-spin"></i>
+                        </div>
+                        <button type="button"
+                                class="btn btn-primary"
+                                ng-click="update()"
+                                ng-disabled="!boardForm.$valid">
+                            Save
+                        </button>
+                        <button type="button"
+                                class="btn btn-default"
+                                ng-click="toggleEditMode()">
+                            Cancel
+                        </button>
+                    </div>
+                    <button type="button"
+                            class="btn btn-danger"
+                            ng-click="remove()">
+                        Archive board
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</script>
+
+
+<!-- Template for the board's lanes -->
+<script type="text/ng-template" id="/inline/kanban_lanes.html">
+    <div class="kanban-board" as-sortable="lanesSortable" ng-model="worklists">
+        <div class="kanban-lane" as-sortable-item ng-repeat="worklist in worklists">
+            <span ng-if="!worklist.editing">
+                <i class="fa fa-bars" as-sortable-item-handle></i>
+                <a class="kanban-lane-title" ng-click="toggleEditLane(worklist)">
+                    {{ worklist.title }}
+                </a>
+                <button type="button" class="close" title="Remove"
+                        ng-click="removeLane(worklist)">
+                    &times;
+                </button>
+            </span>
+            <input class="form-control"
+                   type="text"
+                   ng-model="worklist.title"
+                   placeholder="Lane Title"
+                   focus
+                   ng-if="worklist.editing"
+                   ng-blur="toggleEditLane(worklist)" />
+            <div as-sortable="cardsSortable"
+                 ng-model="worklist.items"
                  class="kanban-lane-contents">
-                <div ng-repeat="story in priorities.contents" class="kanban-card">
-                    <a href="#!/story/{{story.id}}">
-                        {{story.title}}
-                    </a>
+                <div as-sortable-item
+                     ng-repeat="item in worklist.items"
+                     ng-switch="item.type">
+                    <div as-sortable-item-handle class="kanban-card" ng-switch-when="story">
+                        <i class="fa fa-sb-story text-muted"></i>
+                        <a href="#!/story/{{item.value}}">
+                            {{item.title}}
+                        </a>
+                    </div>
+                    <div as-sortable-item-handle class="kanban-card" ng-switch-when="task">
+                        <i class="fa fa-tasks text-muted"></i>
+                        <a href="#!/story/{{item.story_id}}">
+                            {{item.title}}
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="text-center text-muted">
-                <button class="btn btn-kanban-lane">
+                <button ng-click="addItem(worklist)"
+                        class="btn btn-kanban-lane">
                     Add a card...
                 </button>
             </div>
         </div>
+        <div class="kanban-lane-clickable" ng-click="addLane()">
+            Add lane
+        </div>
     </div>
-</div>
+</script>

@@ -55,7 +55,7 @@ angular.module('sb.dashboard',
             })
             .state('sb.dashboard.kanban', {
                 url: '/kanban',
-                controller: 'DashboardController',
+                controller: 'KanbanController',
                 templateUrl: 'app/dashboard/template/kanban.html'
             })
             .state('sb.dashboard.worklists', {

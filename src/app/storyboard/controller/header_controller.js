@@ -21,7 +21,8 @@
 angular.module('storyboard').controller('HeaderController',
     function ($q, $scope, $rootScope, $state, NewStoryService, Session,
               SessionState, CurrentUser, Criteria, Notification, Priority,
-              Project, Story, ProjectGroup, NewWorklistService) {
+              Project, Story, ProjectGroup, NewWorklistService,
+              NewBoardService) {
         'use strict';
 
         function resolveCurrentUser() {
@@ -58,6 +59,14 @@ angular.module('storyboard').controller('HeaderController',
             NewWorklistService.showNewWorklistModal()
                 .then(function () {
                     $state.go('sb.dashboard.worklist');
+                }
+            );
+        };
+
+        $scope.newBoard = function () {
+            NewBoardService.showNewBoardModal()
+                .then(function () {
+                    $state.go('sb.dashboard.kanban');
                 }
             );
         };

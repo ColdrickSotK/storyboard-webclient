@@ -119,12 +119,51 @@
 /**
  *  Kanban Styling
  */
+.kanban-board {
+    overflow-x: scroll;
+    white-space: nowrap;
+    height: 100%;
+    padding-bottom: 15px;
+}
+
 .kanban-lane {
     padding: 10px;
     margin: 0px 10px;
     background-color: #ddd;
     border-radius: @border-radius-base;
     border: 1px solid #bbb;
+    width: 200px;
+    display: inline-block;
+    vertical-align: top;
+    white-space: normal;
+}
+
+.kanban-lane-clickable {
+    .kanban-lane;
+
+    text-align: center !important;
+    color: @link-color;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+        background-color: #bbb;
+        color: @link-hover-color;
+        text-decoration: @link-hover-decoration;
+        cursor: pointer;
+    }
+}
+
+.row-centered {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.col-centered {
+    display: inline-block;
+    float: none;
+    text-align: left;
+    margin-right: -4px;
 }
 
 .btn-kanban-lane:hover {
@@ -164,6 +203,12 @@
     min-height: 20px;
     padding: 5px 0px;
 }
+
+.kanban-lane-title {
+    color: #333;
+    font-weight: bold;
+}
+
 
 
 /**
@@ -220,19 +265,38 @@
 /* Optional CSS, default style for ng-sortable */
 /* ******************************************* */
 
-.as-sortable-item {
-    background-color: #ffffff;
-}
-
 .as-sortable-item-handle {
 }
 
 .as-sortable-placeholder {
-    border: 1px dashed darkgrey;
+    border: 1px dashed #ddd;
+    border-radius: 4px;
     box-sizing: border-box;
-    background-color: #dbdbdb;
+    background-color: #999;
 }
 
+.as-sortable-dragging > .as-sortable-item {
+    width: inherit;
+    height: inherit;
+}
+
+.row-centered > .as-sortable-placeholder {
+    float: none;
+    display: inline-block;
+}
+
+.kanban-board > .as-sortable-placeholder {
+    .row-centered > .as-sortable-placeholder;
+    margin: 0px 10px;
+}
+
+.as-sortable-dragging {
+    float: none;
+}
 
 .as-sortable-hidden {
+}
+
+.kanban-board.as-sortable-dragging {
+    overflow: visible;
 }

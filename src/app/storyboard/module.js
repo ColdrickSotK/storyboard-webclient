@@ -26,10 +26,9 @@ angular.module('storyboard',
     [ 'sb.services', 'sb.templates', 'sb.dashboard', 'sb.pages', 'sb.projects',
         'sb.auth', 'sb.story', 'sb.profile', 'sb.notification', 'sb.search',
         'sb.admin', 'sb.subscription', 'sb.project_group', 'sb.worklist',
-        'sb.board',
-        'ui.router', 'ui.bootstrap', 'ui.sortable', 'monospaced.elastic',
-        'angularMoment', 'angular-data.DSCacheFactory', 'viewhead',
-        'ngSanitize', 'as.sortable'])
+        'sb.board', 'ui.router', 'ui.bootstrap', 'ui.sortable',
+        'monospaced.elastic', 'angularMoment', 'angular-data.DSCacheFactory',
+        'viewhead', 'ngSanitize', 'as.sortable'])
     .constant('angularMomentConfig', {
         preprocess: 'utc',
         timezone: 'UTC'

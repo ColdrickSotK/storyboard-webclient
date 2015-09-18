@@ -18,7 +18,7 @@
  * The storyboard dashboard module. Handles our index page.
  */
 angular.module('sb.dashboard',
-    [ 'sb.services', 'sb.templates', 'sb.auth', 'ui.router', 'ui.bootstrap'])
+    ['sb.services', 'sb.templates', 'sb.auth', 'ui.router', 'ui.bootstrap'])
     .config(function ($stateProvider, SessionResolver) {
         'use strict';
 

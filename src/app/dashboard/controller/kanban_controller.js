@@ -22,67 +22,13 @@ angular.module('sb.dashboard').controller('KanbanController',
               SubscriptionEvent, $modal, Board, Project) {
         'use strict';
 
-        function addItem(list, listitem) {
-            return function(item) {
-                item.list_item_id = listitem.id;
-                item.type = listitem.item_type;
-                item.position = listitem.list_position;
-                list.push(item);
-                list.sort(function(a, b) {
-                    return a.position - b.position;
-                });
-            };
-        }
-
-        function resolverFactory(worklist) {
-            return function(items) {
-                for (var i = 0; i < items.length; i++) {
-                    var item = items[i];
-                    if (item.item_type === 'task') {
-                        Task.get({
-                            id: item.item_id
-                        }).$promise.then(
-                            addItem(worklist.items, item));
-                    } else if (item.item_type === 'story') {
-                        Story.get({
-                            id: item.item_id
-                        }).$promise.then(
-                            addItem(worklist.items, item));
-                    }
-                }
-            };
-        }
-
-        function getLane(listID) {
-            for (var n = 0; n < $scope.lanes.length; n++) {
-                if ($scope.lanes[n].list_id === listID) {
-                    return $scope.lanes[n];
-                }
-            }
-        }
-
-        function loadWorklists() {
-            Worklist.browse({board_id: 1}, function (results) {
-                $scope.worklists = results.sort(function(a, b) {
-                    return getLane(a.id).position - getLane(b.id).position;
-                });
-                for (var i = 0; i < results.length; i++) {
-                    $scope.worklists[i].items = [];
-                    Worklist.ItemsController.get({
-                        id: results[i].id
-                    }).$promise.then(resolverFactory($scope.worklists[i]));
-                }
-            });
-        }
-
         function loadBoard() {
             var params = {id: 1};
             Board.get(params).$promise
                 .then(function(board) {
                     $scope.board = board;
-                    $scope.lanes = board.lanes;
-                })
-                .then(loadWorklists);
+                    Board.loadContents(board, true, true);
+                });
         }
 
         loadBoard();
@@ -102,7 +48,10 @@ angular.module('sb.dashboard').controller('KanbanController',
         }
 
         $scope.addItem = function(worklist) {
-            showAddItemModal(worklist).finally(loadWorklists);
+            showAddItemModal(worklist)
+                .finally(function() {
+                    Worklist.loadContents(worklist, true);
+                });
         };
 
         $scope.showEditForm = false;
@@ -111,12 +60,10 @@ angular.module('sb.dashboard').controller('KanbanController',
         };
 
         $scope.update = function() {
-            $scope.board.lanes = [];
-            for (var i = 0; i < $scope.worklists.length; i++) {
-                var lane = $scope.worklists[i];
-                $scope.board.lanes.push(lane.id);
-            }
-            $scope.board.$update().then($scope.toggleEditMode);
+            $scope.board.$update().then(function() {
+                loadBoard();
+                $scope.toggleEditMode();
+            });
         };
 
         $scope.remove = function() {
@@ -161,39 +108,50 @@ angular.module('sb.dashboard').controller('KanbanController',
          * Add a lane.
          */
         $scope.addLane = function () {
-            $scope.worklists.push(new Worklist({
+            $scope.board.worklists.push(new Worklist({
+                id: null,
                 title: '',
                 editing: true
             }));
         };
 
         $scope.removeLane = function (worklist) {
-            var idx = $scope.worklists.indexOf(worklist);
-            $scope.worklists.splice(idx, 1);
-            worklist.$delete().then(loadWorklists);
+            var idx = $scope.board.worklists.indexOf(worklist);
+            $scope.board.worklists.splice(idx, 1);
+            worklist.$delete()
+                .then(Board.loadContents($scope.board, true, true));
         };
 
-        function updateBoardLanes() {
-            for (var i = 0; i < $scope.worklists.length; i++) {
-                var lane = getLane($scope.worklists[i].id);
-                lane.position = i;
+        function updateBoardLanes(newList) {
+            for (var i = 0; i < $scope.board.worklists.length; i++) {
+                var lane = Board.getLane($scope.board,
+                                         $scope.board.worklists[i].id);
+                if (!lane) {
+                    $scope.board.lanes.push({
+                        list_id: newList.id,
+                        board_id: $scope.board.id,
+                        position: i
+                    });
+                } else {
+                    lane.position = i;
+                }
             }
-            $scope.board.lanes = $scope.lanes;
-            $scope.board.$update();
+            $scope.board.$update().then(function() {
+                Board.loadContents($scope.board, true, true);
+            });
         }
 
         $scope.toggleEditLane = function(worklist) {
             if (worklist.editing) {
-                if (worklist.id === undefined || worklist.id === null) {
+                if (worklist.id === null) {
                     worklist.$create()
                         .then(updateBoardLanes)
-                        .then(loadWorklists);
+                        .then(function() {
+                            Board.loadContents($scope.board, true, true);
+                        });
                 } else {
                     worklist.$update().then(function(list) {
-                        list.items = [];
-                        Worklist.ItemsController.get({
-                            id: worklist.id
-                        }).$promise.then(resolverFactory(list));
+                        Worklist.loadContents(list, true);
                     });
                 }
             }
@@ -247,6 +205,9 @@ angular.module('sb.dashboard').controller('KanbanController',
 
         $scope.cardsSortable = {
             orderChanged: moveCardInLane,
-            itemMoved: moveCardBetweenLanes
+            itemMoved: moveCardBetweenLanes,
+            accept: function (sourceItemHandleScope, destSortableScope) {
+                return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id;
+            }
         };
     });

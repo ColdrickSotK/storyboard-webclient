@@ -1,0 +1,73 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1 view-title>Worklists and Boards Dashboard</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <table class="table table-striped">
+                <thead>
+                <th colspan="2">My Boards</th>
+                </thead>
+                <tbody>
+                <tr ng-repeat="board in boards">
+                    <td>
+                        <p>
+                            <a href="#!/board/{{board.id}}">
+                                {{board.title}}
+                            </a>
+                        </p>
+                        <!-- Some indication of contents -->
+                        <small ng-repeat="list in board.worklists">
+                        <span class="badge"
+                              ng-class="{'badge-primary': list.items.length > 0}">
+                            {{list.items.length}}
+                        </span> {{list.title}}
+                        &nbsp;
+                        </small>
+                    </td>
+                </tr>
+                </tbody>
+                <tbody ng-show="boards.length == 0">
+                <td colspan="3" class="text-center text-muted">
+                    <em>
+                        You don't currently have any boards.
+                    </em>
+                </td>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm-6">
+            <table class="table table-striped">
+                <thead>
+                <th colspan="2">My Worklists</th>
+                </thead>
+                <tbody>
+                <tr ng-repeat="worklist in worklists">
+                    <td>
+                        <p>
+                            <a href="#!/worklist/{{worklist.id}}">
+                                {{worklist.title}}
+                            </a>
+                        </p>
+                        <!-- Some indication of contents -->
+                        <small>
+                        <span class="badge"
+                              ng-class="{'badge-primary': worklist.items.length > 0}">
+                            {{worklist.items.length}}
+                        </span> Items
+                        </small>
+                    </td>
+                </tr>
+                </tbody>
+                <tbody ng-show="worklists.length == 0">
+                <td colspan="3" class="text-center text-muted">
+                    <em>
+                        You don't currently have any worklists.
+                    </em>
+                </td>
+                </tbody>
+            </table>
+        </div>
+    </div>

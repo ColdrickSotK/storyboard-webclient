@@ -140,8 +140,8 @@
 
 <!-- Template for the board's lanes -->
 <script type="text/ng-template" id="/inline/kanban_lanes.html">
-    <div class="kanban-board" as-sortable="lanesSortable" ng-model="worklists">
-        <div class="kanban-lane" as-sortable-item ng-repeat="worklist in worklists">
+    <div class="kanban-board" as-sortable="lanesSortable" ng-model="board.worklists">
+        <div class="kanban-lane" as-sortable-item ng-repeat="worklist in board.worklists">
             <span ng-if="!worklist.editing">
                 <i class="fa fa-bars" as-sortable-item-handle></i>
                 <a class="kanban-lane-title" ng-click="toggleEditLane(worklist)">

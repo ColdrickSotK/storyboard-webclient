@@ -48,19 +48,14 @@ angular.module('sb.dashboard',
                     }
                 }
             })
-            .state('sb.dashboard.home', {
-                url: '/home',
+            .state('sb.dashboard.stories', {
+                url: '/stories',
                 controller: 'DashboardController',
                 templateUrl: 'app/dashboard/template/dashboard.html'
             })
-            .state('sb.dashboard.kanban', {
-                url: '/kanban',
-                controller: 'KanbanController',
-                templateUrl: 'app/dashboard/template/kanban.html'
-            })
-            .state('sb.dashboard.worklists', {
-                url: '/worklists',
-                controller: 'DashboardWorklistsController',
-                templateUrl: 'app/dashboard/template/worklists.html'
+            .state('sb.dashboard.boards', {
+                url: '/boards',
+                controller: 'BoardsWorklistsController',
+                templateUrl: 'app/dashboard/template/boards_worklists.html'
             });
     });

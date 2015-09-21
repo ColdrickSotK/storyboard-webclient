@@ -17,13 +17,12 @@
 /**
  * A controller that manages our logged-in dashboard
  */
-angular.module('sb.dashboard').controller('KanbanController',
-    function ($scope, currentUser, Story, Task, Worklist,
-              SubscriptionEvent, $modal, Board, Project) {
+angular.module('sb.dashboard').controller('BoardDetailController',
+    function ($scope, Worklist, $modal, Board, Project, $stateParams) {
         'use strict';
 
         function loadBoard() {
-            var params = {id: 1};
+            var params = {id: $stateParams.boardID};
             Board.get(params).$promise
                 .then(function(board) {
                     $scope.board = board;

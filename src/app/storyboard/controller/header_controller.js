@@ -57,16 +57,17 @@ angular.module('storyboard').controller('HeaderController',
 
         $scope.newWorklist = function () {
             NewWorklistService.showNewWorklistModal()
-                .then(function () {
-                    $state.go('sb.dashboard.worklist');
+                .then(function (worklist) {
+                    $state.go('sb.worklist.detail',
+                              {worklistID: worklist.id});
                 }
             );
         };
 
         $scope.newBoard = function () {
             NewBoardService.showNewBoardModal()
-                .then(function () {
-                    $state.go('sb.dashboard.kanban');
+                .then(function (board) {
+                    $state.go('sb.board.detail', {boardID: board.id});
                 }
             );
         };

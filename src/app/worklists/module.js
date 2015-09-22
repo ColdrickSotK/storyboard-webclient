@@ -32,5 +32,10 @@ angular.module('sb.worklist', ['ui.router', 'sb.services', 'sb.util',
                 abstract: true,
                 url: '/worklist',
                 template: '<div ui-view></div>'
+            })
+            .state('sb.worklist.detail', {
+                url: '/{worklistID:[0-9]+}',
+                controller: 'WorklistDetailController',
+                templateUrl: 'app/worklists/template/detail.html'
             });
     });

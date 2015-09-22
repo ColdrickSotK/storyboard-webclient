@@ -117,8 +117,7 @@ angular.module('sb.dashboard').controller('BoardDetailController',
         $scope.removeLane = function (worklist) {
             var idx = $scope.board.worklists.indexOf(worklist);
             $scope.board.worklists.splice(idx, 1);
-            worklist.$delete()
-                .then(Board.loadContents($scope.board, true, true));
+            worklist.$delete();
         };
 
         function updateBoardLanes(newList) {
@@ -143,11 +142,7 @@ angular.module('sb.dashboard').controller('BoardDetailController',
         $scope.toggleEditLane = function(worklist) {
             if (worklist.editing) {
                 if (worklist.id === null) {
-                    worklist.$create()
-                        .then(updateBoardLanes)
-                        .then(function() {
-                            Board.loadContents($scope.board, true, true);
-                        });
+                    worklist.$create().then(updateBoardLanes);
                 } else {
                     worklist.$update().then(function(list) {
                         Worklist.loadContents(list, true);
@@ -159,8 +154,8 @@ angular.module('sb.dashboard').controller('BoardDetailController',
 
         $scope.lanesSortable = {
             orderChanged: updateBoardLanes,
-            accept: function (sourceItemHandleScope, destSortableScope) {
-                return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id;
+            accept: function (sourceHandle, dest) {
+                return sourceHandle.itemScope.sortableScope.$id === dest.$id;
             }
         };
 
@@ -180,8 +175,9 @@ angular.module('sb.dashboard').controller('BoardDetailController',
         function moveCardBetweenLanes(result) {
             var src = result.source.sortableScope.$parent.worklist;
             var dst = result.dest.sortableScope.$parent.worklist;
+            var item;
             for (var i = 0; i < src.items.length; i++) {
-                var item = src.items[i];
+                item = src.items[i];
                 item.position = i;
                 Worklist.ItemsController.update({
                     id: src.id,
@@ -190,7 +186,7 @@ angular.module('sb.dashboard').controller('BoardDetailController',
                 });
             }
             for (var j = 0; j < dst.items.length; j++) {
-                var item = dst.items[j];
+                item = dst.items[j];
                 item.position = j;
                 item.list_id = dst.id;
                 Worklist.ItemsController.update({
@@ -205,8 +201,10 @@ angular.module('sb.dashboard').controller('BoardDetailController',
         $scope.cardsSortable = {
             orderChanged: moveCardInLane,
             itemMoved: moveCardBetweenLanes,
-            accept: function (sourceItemHandleScope, destSortableScope) {
-                return sourceItemHandleScope.itemScope.sortableScope.$id === destSortableScope.$id;
+            accept: function (sourceHandle, dest) {
+                var srcParent = sourceHandle.itemScope.sortableScope.$parent;
+                var dstParentSortable = dest.$parent.sortableScope;
+                return srcParent.sortableScope.$id === dstParentSortable.$id;
             }
         };
     });

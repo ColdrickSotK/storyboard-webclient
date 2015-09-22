@@ -94,7 +94,6 @@ angular.module('sb.services').factory('Worklist',
                 }
             }
         };
-            
 
         resource.loadContents = function (worklist, resolveContents) {
             resource.ItemsController.get({

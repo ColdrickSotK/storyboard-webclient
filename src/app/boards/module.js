@@ -24,7 +24,6 @@ angular.module('sb.board', ['ui.router', 'sb.services', 'sb.util',
         'use strict';
 
         // URL Defaults.
-        // TODO(SotK): nah
         $urlRouterProvider.when('/board', '/board/list');
 
         // Set our page routes.

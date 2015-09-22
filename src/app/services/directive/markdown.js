@@ -28,7 +28,7 @@ angular.module('sb.services')
             },
             link: function(scope, elem) {
                 scope.$watch('content', function(newVal) {
-                    elem.html($sanitize(marked(newVal)));
+                    elem.html('<div>' + $sanitize(marked(newVal)) + '</div>');
                 }, true);
             }
         };

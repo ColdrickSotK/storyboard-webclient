@@ -34,7 +34,7 @@
                     <tr as-sortable-item ng-repeat="item in worklist.items">
                         <td as-sortable-item-handle ng-switch="item.type" class="hover-row"
                             title="{{item.type}}: {{item.title}}">
-                            <a href="#!/story/{{item.value}}" ng-switch-when="story">
+                            <a href="#!/story/{{item.id}}" ng-switch-when="story">
                                 <div class="col-sm-1">
                                     <i class="fa fa-sb-story text-muted"></i>
                                 </div>

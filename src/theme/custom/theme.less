@@ -132,7 +132,7 @@
     background-color: #ddd;
     border-radius: @border-radius-base;
     border: 1px solid #bbb;
-    width: 200px;
+    width: 190px;
     display: inline-block;
     vertical-align: top;
     white-space: normal;
@@ -179,6 +179,7 @@
 }
 
 .kanban-card {
+    word-wrap: break-word;
     padding: 5px;
     margin: 5px 0px;
     background-color: #fff;
@@ -186,6 +187,12 @@
     text-align: left;
     border-radius: @border-radius-base;
     border: 1px solid #bbb;
+}
+
+.kanban-card-readonly {
+    .kanban-card;
+
+    cursor: inherit;
 }
 
 .kanban-lane.ui-sortable-helper {
@@ -200,8 +207,26 @@
 }
 
 .kanban-lane-contents {
-    min-height: 20px;
-    padding: 5px 0px;
+    /* TODO(SotK): Make this better with media queries. */
+    max-height: 65vh;
+    overflow-y: auto;
+    padding: 5px 0px 5px 10px;
+
+    /**
+     * This (along with the 10px padding) makes scrolling on the edge of
+     * the lane be detected properly.
+     */
+    margin-left: -10px;
+
+    /* This stops overflow-y from causing a margin on the right hand side. */
+    margin-right: -0.1px;
+
+    margin-bottom: 10px;
+}
+
+.kanban-lane-contents-readonly {
+    .kanban-lane-contents;
+    margin-bottom: 0px;
 }
 
 .kanban-lane-title {
@@ -282,12 +307,18 @@
 
 .row-centered > .as-sortable-placeholder {
     float: none;
-    display: inline-block;
+    display: inline-block !important;
 }
 
 .kanban-board > .as-sortable-placeholder {
-    .row-centered > .as-sortable-placeholder;
     margin: 0px 10px;
+    float: none;
+    display: inline-block !important;
+}
+
+.kanban-lane > .as-sortable-item-handle {
+    margin: -10px;
+    padding: 10px;
 }
 
 .as-sortable-dragging {
@@ -298,5 +329,9 @@
 }
 
 .kanban-board.as-sortable-dragging {
+    overflow: visible;
+}
+
+.kanban-lane-contents.as-sortable-dragging {
     overflow: visible;
 }

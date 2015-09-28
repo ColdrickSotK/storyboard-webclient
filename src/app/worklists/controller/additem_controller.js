@@ -19,7 +19,7 @@
  */
 angular.module('sb.worklist').controller('WorklistAddItemController',
     function ($log, $scope, $state, worklist, $modalInstance, Story, Task,
-              Criteria, Worklist, $q) {
+              Criteria, Worklist, $q, valid) {
         'use strict';
 
         $scope.worklist = worklist;
@@ -48,7 +48,9 @@ angular.module('sb.worklist').controller('WorklistAddItemController',
                     item_type: item_type
                 };
 
-                Worklist.ItemsController.create(params);
+                if (valid(item)) {
+                    Worklist.ItemsController.create(params);
+                }
             }
             $modalInstance.dismiss('success');
         };
@@ -78,7 +80,9 @@ angular.module('sb.worklist').controller('WorklistAddItemController',
                 var criteria = [];
 
                 var addResult = function (item) {
-                    criteria.push(item);
+                    if (valid(item)) {
+                        criteria.push(item);
+                    }
                 };
 
                 for (var i = 0; i < searchResults.length; i++) {

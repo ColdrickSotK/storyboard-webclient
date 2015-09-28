@@ -1,0 +1,35 @@
+<div as-sortable="cardsSortable"
+     ng-model="worklist.items"
+     class="kanban-lane-contents">
+    <div class="kanban-card"
+         as-sortable-item
+         ng-repeat="item in worklist.items"
+         ng-switch="item.type">
+        <div as-sortable-item-handle ng-switch-when="story">
+            <button type="button" class="close" title="Remove"
+                    ng-click="removeCard(worklist, item)">
+                &times;
+            </button>
+            <i class="fa fa-sb-story text-muted"></i>
+            <a href="#!/story/{{item.id}}">
+                {{item.title}}
+            </a>
+        </div>
+        <div as-sortable-item-handle ng-switch-when="task">
+            <button type="button" class="close" title="Remove"
+                    ng-click="removeCard(worklist, item)">
+                &times;
+            </button>
+            <i class="fa fa-tasks text-muted"></i>
+            <a href="#!/story/{{item.story_id}}">
+                {{item.title}}
+            </a>
+        </div>
+    </div>
+</div>
+<div class="text-center text-muted">
+    <button ng-click="addItem(worklist)"
+            class="btn btn-kanban-lane">
+        Add a card...
+    </button>
+</div>

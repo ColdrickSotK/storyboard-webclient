@@ -72,6 +72,12 @@ angular.module('sb.worklist').controller('WorklistDetailController',
                 resolve: {
                     worklist: function() {
                         return $scope.worklist;
+                    },
+                    valid: function() {
+                        return function() {
+                            // No limit on the contents of worklists
+                            return true;
+                        };
                     }
                 }
             });

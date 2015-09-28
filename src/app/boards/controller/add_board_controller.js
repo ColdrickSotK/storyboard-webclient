@@ -30,9 +30,9 @@ angular.module('sb.board').controller('AddBoardController',
 
         function saveBoard() {
             $scope.board.$create(
-                function () {
+                function (result) {
                     $modalInstance.dismiss('success');
-                    $state.go('sb.dashboard.kanban');
+                    $state.go('sb.board.detail', {boardID: result.id});
                 }
             );
         }

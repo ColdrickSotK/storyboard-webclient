@@ -17,20 +17,27 @@
 /**
  * A controller that manages our logged-in dashboard
  */
-angular.module('sb.dashboard').controller('BoardDetailController',
-    function ($scope, Worklist, $modal, Board, Project, $stateParams) {
+angular.module('sb.board').controller('BoardDetailController',
+    function ($scope, Worklist, $modal, Board, Project, $stateParams,
+              $document, $window) {
         'use strict';
 
-        function loadBoard() {
+        function loadBoard(onlyContents) {
             var params = {id: $stateParams.boardID};
-            Board.get(params).$promise
-                .then(function(board) {
-                    $scope.board = board;
-                    Board.loadContents(board, true, true);
-                });
+            if (onlyContents) {
+                Board.loadContents($scope.board, true, true);
+            } else {
+                Board.get(params).$promise
+                    .then(function(board) {
+                        $scope.board = board;
+                        Board.loadContents(board, true, true);
+                    });
+            }
         }
 
         loadBoard();
+
+        $scope.permissions = Board.Permissions.get({id: $stateParams.boardID});
 
         function showAddItemModal(worklist) {
             var modalInstance = $modal.open({
@@ -39,6 +46,22 @@ angular.module('sb.dashboard').controller('BoardDetailController',
                 resolve: {
                     worklist: function() {
                         return worklist;
+                    },
+                    valid: function() {
+                        var board = $scope.board;
+                        return function(item) {
+                            var valid = true;
+                            angular.forEach(board.worklists, function(list) {
+                                angular.forEach(list.items, function(listItem) {
+                                    var type = item.type.toLowerCase();
+                                    if (item.value === listItem.id &&
+                                        type === listItem.type) {
+                                        valid = false;
+                                    }
+                                });
+                            });
+                            return valid;
+                        };
                     }
                 }
             });
@@ -60,7 +83,7 @@ angular.module('sb.dashboard').controller('BoardDetailController',
 
         $scope.update = function() {
             $scope.board.$update().then(function() {
-                loadBoard();
+                loadBoard(true);
                 $scope.toggleEditMode();
             });
         };
@@ -120,6 +143,16 @@ angular.module('sb.dashboard').controller('BoardDetailController',
             worklist.$delete();
         };
 
+        $scope.removeCard = function (worklist, item) {
+            Worklist.ItemsController.delete({
+                id: worklist.id,
+                item_id: item.list_item_id
+            }).$promise.then(function() {
+                var idx = worklist.items.indexOf(item);
+                worklist.items.splice(idx, 1);
+            });
+        };
+
         function updateBoardLanes(newList) {
             for (var i = 0; i < $scope.board.worklists.length; i++) {
                 var lane = Board.getLane($scope.board,
@@ -152,12 +185,26 @@ angular.module('sb.dashboard').controller('BoardDetailController',
             worklist.editing = !worklist.editing;
         };
 
-        $scope.lanesSortable = {
-            orderChanged: updateBoardLanes,
-            accept: function (sourceHandle, dest) {
-                return sourceHandle.itemScope.sortableScope.$id === dest.$id;
+        /**
+         * Callbacks and options for ngSortable directives.
+         */
+        function maybeScrollContainer(itemPosition, containment, eventObj) {
+            if (eventObj) {
+                var container = document.getElementsByClassName(
+                    'kanban-board')[0];
+                var offsetX = ($window.pageXOffset ||
+                               $document[0].documentElement.scrollLeft);
+                var targetX = eventObj.pageX - offsetX;
+                var leftBound = container.clientLeft + container.offsetLeft;
+                var rightBound = leftBound + container.clientWidth;
+
+                if (targetX < leftBound) {
+                    container.scrollLeft -= 10;
+                } else if (targetX > rightBound) {
+                    container.scrollLeft += 10;
+                }
             }
-        };
+        }
 
         function moveCardInLane(result) {
             var list = result.source.sortableScope.$parent.worklist;
@@ -173,21 +220,11 @@ angular.module('sb.dashboard').controller('BoardDetailController',
         }
 
         function moveCardBetweenLanes(result) {
-            var src = result.source.sortableScope.$parent.worklist;
+            moveCardInLane(result);
             var dst = result.dest.sortableScope.$parent.worklist;
-            var item;
-            for (var i = 0; i < src.items.length; i++) {
-                item = src.items[i];
+            for (var i = 0; i < dst.items.length; i++) {
+                var item = dst.items[i];
                 item.position = i;
-                Worklist.ItemsController.update({
-                    id: src.id,
-                    item_id: item.list_item_id,
-                    list_position: item.position
-                });
-            }
-            for (var j = 0; j < dst.items.length; j++) {
-                item = dst.items[j];
-                item.position = j;
                 item.list_id = dst.id;
                 Worklist.ItemsController.update({
                     id: dst.id,
@@ -198,12 +235,27 @@ angular.module('sb.dashboard').controller('BoardDetailController',
             }
         }
 
+        $scope.lanesSortable = {
+            orderChanged: updateBoardLanes,
+            dragMove: maybeScrollContainer,
+            accept: function (sourceHandle, dest) {
+                return sourceHandle.itemScope.sortableScope.$id === dest.$id;
+            }
+        };
+
         $scope.cardsSortable = {
             orderChanged: moveCardInLane,
             itemMoved: moveCardBetweenLanes,
+            dragMove: maybeScrollContainer,
             accept: function (sourceHandle, dest) {
                 var srcParent = sourceHandle.itemScope.sortableScope.$parent;
                 var dstParentSortable = dest.$parent.sortableScope;
+                if (!srcParent.sortableScope &&
+                    $scope.permissions.editBoard) {
+                    return false;
+                } else if (!$scope.permissions.editBoard) {
+                    return true;
+                }
                 return srcParent.sortableScope.$id === dstParentSortable.$id;
             }
         };

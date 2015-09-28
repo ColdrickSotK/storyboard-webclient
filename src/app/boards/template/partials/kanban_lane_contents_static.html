@@ -1,0 +1,18 @@
+<div class="kanban-lane-contents-readonly">
+    <div class="kanban-card-readonly"
+         ng-repeat="item in worklist.items"
+         ng-switch="item.type">
+        <div ng-switch-when="story">
+            <i class="fa fa-sb-story text-muted"></i>
+            <a href="#!/story/{{item.id}}">
+                {{item.title}}
+            </a>
+        </div>
+        <div ng-switch-when="task">
+            <i class="fa fa-tasks text-muted"></i>
+            <a href="#!/story/{{item.story_id}}">
+                {{item.title}}
+            </a>
+        </div>
+    </div>
+</div>

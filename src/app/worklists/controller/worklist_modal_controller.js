@@ -28,9 +28,9 @@ angular.module('sb.worklist').controller('WorklistModalController',
          */
         $scope.save = function () {
             $scope.worklist.$create(
-                function () {
+                function (result) {
                     $modalInstance.dismiss('success');
-                    $state.go('sb.dashboard.worklist');
+                    $state.go('sb.worklist.detail', {worklistID: result.id});
                 }
             );
         };

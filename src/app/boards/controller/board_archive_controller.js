@@ -31,7 +31,7 @@ angular.module('sb.board').controller('BoardArchiveController',
             $scope.board.$delete(
                 function () {
                     $modalInstance.dismiss('success');
-                    $state.go('sb.dashboard.kanban');
+                    $state.go('sb.dashboard.boards');
                 }
             );
         };

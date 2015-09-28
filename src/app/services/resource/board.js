@@ -21,12 +21,17 @@
  * @author Adam Coldrick
  */
 angular.module('sb.services').factory('Board',
-    function (ResourceFactory, Worklist) {
+    function (ResourceFactory, Worklist, $resource, storyboardApiBase) {
         'use strict';
 
         var resource = ResourceFactory.build(
             '/boards/:id',
             '/boards/search',
+            {id: '@id'}
+        );
+
+        resource.Permissions = $resource(
+            storyboardApiBase + '/boards/:id/permissions',
             {id: '@id'}
         );
 

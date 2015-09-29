@@ -103,30 +103,6 @@ angular.module('sb.board').controller('BoardDetailController',
         };
 
         /**
-         * Project typeahead search method.
-         */
-        $scope.searchProjects = function (value) {
-            return Project.browse({name: value, limit: 10}).$promise;
-        };
-
-        /**
-         * Formats the project name.
-         */
-        $scope.formatProjectName = function (model) {
-            if (!!model) {
-                return model.name;
-            }
-            return '';
-        };
-
-        /**
-         * Select a new project.
-         */
-        $scope.selectNewProject = function (model) {
-            $scope.board.project_id = model.id;
-        };
-
-        /**
          * Add a lane.
          */
         $scope.addLane = function () {

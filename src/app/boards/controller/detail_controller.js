@@ -15,30 +15,34 @@
  */
 
 /**
- * A controller that manages our logged-in dashboard
+ * A controller for a kanban board.
  */
 angular.module('sb.board').controller('BoardDetailController',
     function ($scope, Worklist, $modal, Board, Project, $stateParams,
-              $document, $window) {
+              BoardHelper) {
         'use strict';
 
+        /**
+         * Load the board. If onlyContents is true then assume $scope.board
+         * is a board and reload its contents.
+         */
         function loadBoard(onlyContents) {
             var params = {id: $stateParams.boardID};
             if (onlyContents) {
                 Board.loadContents($scope.board, true, true);
             } else {
-                Board.get(params).$promise
-                    .then(function(board) {
-                        $scope.board = board;
-                        Board.loadContents(board, true, true);
-                    });
+                Board.get(params, function(board) {
+                    $scope.board = board;
+                    Board.loadContents(board, true, true);
+                });
             }
         }
 
-        loadBoard();
-
-        $scope.permissions = Board.Permissions.get({id: $stateParams.boardID});
-
+        /**
+         * Show a modal to handle adding cards to a lane. Pass a validation
+         * function to this modal which returns `false` if the card is already
+         * in one of the lanes of the board.
+         */
         function showAddItemModal(worklist) {
             var modalInstance = $modal.open({
                 templateUrl: 'app/worklists/template/additem.html',
@@ -69,6 +73,9 @@ angular.module('sb.board').controller('BoardDetailController',
             return modalInstance.result;
         }
 
+        /**
+         * Add a card to a lane.
+         */
         $scope.addItem = function(worklist) {
             showAddItemModal(worklist)
                 .finally(function() {
@@ -76,11 +83,16 @@ angular.module('sb.board').controller('BoardDetailController',
                 });
         };
 
-        $scope.showEditForm = false;
+        /**
+         * Toggle the edit form for the board title and description.
+         */
         $scope.toggleEditMode = function() {
             $scope.showEditForm = !$scope.showEditForm;
         };
 
+        /**
+         * Save changes to the board.
+         */
         $scope.update = function() {
             $scope.board.$update().then(function() {
                 loadBoard(true);
@@ -88,6 +100,9 @@ angular.module('sb.board').controller('BoardDetailController',
             });
         };
 
+        /**
+         * Open a modal to handle archiving the board.
+         */
         $scope.remove = function() {
             var modalInstance = $modal.open({
                 templateUrl: 'app/boards/template/archive.html',
@@ -103,7 +118,7 @@ angular.module('sb.board').controller('BoardDetailController',
         };
 
         /**
-         * Add a lane.
+         * Add a lane to the board.
          */
         $scope.addLane = function () {
             $scope.board.worklists.push(new Worklist({
@@ -113,12 +128,18 @@ angular.module('sb.board').controller('BoardDetailController',
             }));
         };
 
+        /**
+         * Remove a lane from the board.
+         */
         $scope.removeLane = function (worklist) {
             var idx = $scope.board.worklists.indexOf(worklist);
             $scope.board.worklists.splice(idx, 1);
             worklist.$delete();
         };
 
+        /**
+         * Remove a card from a lane.
+         */
         $scope.removeCard = function (worklist, item) {
             Worklist.ItemsController.delete({
                 id: worklist.id,
@@ -129,6 +150,9 @@ angular.module('sb.board').controller('BoardDetailController',
             });
         };
 
+        /**
+         * Save changes to the ordering of and additions to the lanes.
+         */
         function updateBoardLanes(newList) {
             for (var i = 0; i < $scope.board.worklists.length; i++) {
                 var lane = Board.getLane($scope.board,
@@ -148,6 +172,11 @@ angular.module('sb.board').controller('BoardDetailController',
             });
         }
 
+        /**
+         * Toggle edit mode on a lane. Save changes if toggling on->off, and
+         * create a worklist to represent the lane if one doesn't exist
+         * already.
+         */
         $scope.toggleEditLane = function(worklist) {
             if (worklist.editing) {
                 if (worklist.id === null) {
@@ -162,77 +191,35 @@ angular.module('sb.board').controller('BoardDetailController',
         };
 
         /**
-         * Callbacks and options for ngSortable directives.
+         * Config for the lanes sortable.
          */
-        function maybeScrollContainer(itemPosition, containment, eventObj) {
-            if (eventObj) {
-                var container = document.getElementsByClassName(
-                    'kanban-board')[0];
-                var offsetX = ($window.pageXOffset ||
-                               $document[0].documentElement.scrollLeft);
-                var targetX = eventObj.pageX - offsetX;
-                var leftBound = container.clientLeft + container.offsetLeft;
-                var rightBound = leftBound + container.clientWidth;
-
-                if (targetX < leftBound) {
-                    container.scrollLeft -= 10;
-                } else if (targetX > rightBound) {
-                    container.scrollLeft += 10;
-                }
-            }
-        }
-
-        function moveCardInLane(result) {
-            var list = result.source.sortableScope.$parent.worklist;
-            for (var i = 0; i < list.items.length; i++) {
-                var item = list.items[i];
-                item.position = i;
-                Worklist.ItemsController.update({
-                    id: list.id,
-                    item_id: item.list_item_id,
-                    list_position: item.position
-                });
-            }
-        }
-
-        function moveCardBetweenLanes(result) {
-            moveCardInLane(result);
-            var dst = result.dest.sortableScope.$parent.worklist;
-            for (var i = 0; i < dst.items.length; i++) {
-                var item = dst.items[i];
-                item.position = i;
-                item.list_id = dst.id;
-                Worklist.ItemsController.update({
-                    id: dst.id,
-                    item_id: item.list_item_id,
-                    list_position: item.position,
-                    list_id: item.list_id
-                });
-            }
-        }
-
         $scope.lanesSortable = {
             orderChanged: updateBoardLanes,
-            dragMove: maybeScrollContainer,
+            dragMove: BoardHelper.maybeScrollContainer('kanban-board'),
             accept: function (sourceHandle, dest) {
                 return sourceHandle.itemScope.sortableScope.$id === dest.$id;
             }
         };
 
+        /**
+         * Config for the cards sortable.
+         */
         $scope.cardsSortable = {
-            orderChanged: moveCardInLane,
-            itemMoved: moveCardBetweenLanes,
-            dragMove: maybeScrollContainer,
+            orderChanged: BoardHelper.moveCardInLane,
+            itemMoved: BoardHelper.moveCardBetweenLanes,
+            dragMove: BoardHelper.maybeScrollContainer('kanban-board'),
             accept: function (sourceHandle, dest) {
                 var srcParent = sourceHandle.itemScope.sortableScope.$parent;
                 var dstParentSortable = dest.$parent.sortableScope;
-                if (!srcParent.sortableScope &&
-                    $scope.permissions.editBoard) {
+                if (!srcParent.sortableScope) {
                     return false;
-                } else if (!$scope.permissions.editBoard) {
-                    return true;
                 }
                 return srcParent.sortableScope.$id === dstParentSortable.$id;
             }
         };
+
+        // Load the board and permissions on page load.
+        loadBoard();
+        $scope.permissions = Board.Permissions.get({id: $stateParams.boardID});
+        $scope.showEditForm = false;
     });

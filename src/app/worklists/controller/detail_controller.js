@@ -15,12 +15,15 @@
  */
 
 /**
- * A controller that manages the worklist page
+ * A controller that manages the worklist detail page.
  */
 angular.module('sb.worklist').controller('WorklistDetailController',
-    function ($scope, $modal, $timeout, $stateParams, Worklist) {
+    function ($scope, $modal, $timeout, $stateParams, Worklist, BoardHelper) {
         'use strict';
 
+        /**
+         * Load the worklist and its contents.
+         */
         function loadWorklist() {
             var params = {id: $stateParams.worklistID};
             Worklist.get(params).$promise.then(function(result) {
@@ -29,15 +32,19 @@ angular.module('sb.worklist').controller('WorklistDetailController',
             });
         }
 
-        // Load the worklist.
-        loadWorklist();
-
+        /**
+         * Save the worklist.
+         */
         function saveWorklist() {
             $scope.worklist.$update().then(function() {
                 Worklist.loadContents($scope.worklist, true);
             });
         }
 
+        /**
+         * Toggle edit mode on the worklist. If going on->off then
+         * save changes.
+         */
         $scope.toggleEditMode = function() {
             if (!$scope.worklist.editing) {
                 $scope.worklist.editing = true;
@@ -47,24 +54,9 @@ angular.module('sb.worklist').controller('WorklistDetailController',
             }
         };
 
-        $scope.sortableOptions = {
-            accept: function (sourceHandle, dest) {
-                return sourceHandle.itemScope.sortableScope.$id === dest.$id;
-            },
-            orderChanged: function (e) {
-                var worklist = e.dest.sortableScope.worklist;
-                for (var i = 0; i < worklist.items.length; i++) {
-                    var item = worklist.items[i];
-                    item.position = i;
-                    Worklist.ItemsController.update({
-                        id: worklist.id,
-                        item_id: item.list_item_id,
-                        list_position: item.position
-                    });
-                }
-            }
-        };
-
+        /**
+         * Show a modal to handle adding items to the worklist.
+         */
         function showAddItemModal() {
             var modalInstance = $modal.open({
                 templateUrl: 'app/worklists/template/additem.html',
@@ -85,10 +77,17 @@ angular.module('sb.worklist').controller('WorklistDetailController',
             return modalInstance.result;
         }
 
+        /**
+         * Display the add-item modal and reload the worklist when
+         * it is closed.
+         */
         $scope.addItem = function() {
             showAddItemModal().finally(loadWorklist);
         };
 
+        /**
+         * Remove an item from the worklist.
+         */
         $scope.removeItem = function(item) {
             Worklist.ItemsController.delete({
                 id: $scope.worklist.id,
@@ -99,9 +98,12 @@ angular.module('sb.worklist').controller('WorklistDetailController',
             });
         };
 
-        function showDeleteModal() {
+        /**
+         * Show a modal to handle archiving the worklist.
+         */
+        $scope.remove = function() {
             var modalInstance = $modal.open({
-                templateUrl: 'app/dashboard/template/worklist_delete.html',
+                templateUrl: 'app/worklists/template/delete.html',
                 controller: 'WorklistDeleteController',
                 resolve: {
                     worklist: function() {
@@ -109,12 +111,19 @@ angular.module('sb.worklist').controller('WorklistDetailController',
                     }
                 }
             });
-
-            // Return the modal's promise.
             return modalInstance.result;
-        }
-
-        $scope.remove = function() {
-            showDeleteModal();
         };
+
+        /**
+         * Config for worklist sortable.
+         */
+        $scope.sortableOptions = {
+            accept: function (sourceHandle, dest) {
+                return sourceHandle.itemScope.sortableScope.$id === dest.$id;
+            },
+            orderChanged: BoardHelper.moveCardInLane
+        };
+
+        // Load the worklist.
+        loadWorklist();
     });

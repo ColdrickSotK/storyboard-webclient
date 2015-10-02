@@ -15,19 +15,16 @@
  */
 
 /**
- * Controller for the "new worklist" modal popup.
+ * Controller for the "new board" modal popup.
  */
 angular.module('sb.board').controller('AddBoardController',
     function ($scope, $modalInstance, $state, params, Board, Project,
-              Worklist, $q) {
+              Worklist, $q, BoardHelper) {
         'use strict';
 
-        $scope.lanes = [];
-        $scope.board = new Board({
-            title: '',
-            lanes: []
-        });
-
+        /**
+         * Create the new board.
+         */
         function saveBoard() {
             $scope.board.$create(
                 function (result) {
@@ -37,8 +34,13 @@ angular.module('sb.board').controller('AddBoardController',
             );
         }
 
+        /**
+         * Return a function which adds a "lane" to the board in the given
+         * position. This lane is just a reference to the worklist used to
+         * represent it.
+         */
         function addLaneDetails(position) {
-            return function getLaneID(lane) {
+            return function(lane) {
                 $scope.board.lanes.push({
                     board_id: $scope.board.id,
                     list_id: lane.id,
@@ -47,24 +49,27 @@ angular.module('sb.board').controller('AddBoardController',
             };
         }
 
+        /**
+         * Create worklists to represent the lanes of the board, then save
+         * the board.
+         */
         function saveBoardWithLanes() {
             $scope.board.lanes = [];
             var lanePromises = [];
             for (var i = 0; i < $scope.lanes.length; i++) {
-                // TODO(SotK): Validation
                 var lane = $scope.lanes[i];
+                var addLane = addLaneDetails(i);
                 lane.project_id = $scope.board.project_id;
                 lane.private = $scope.board.private;
-                var addLane = addLaneDetails(i);
                 lanePromises.push(lane.$create(addLane));
             }
             $q.all(lanePromises).then(saveBoard);
         }
 
         /**
-         * Saves the worklist.
+         * Saves the board, and any worklists created to serve as lanes.
          */
-        $scope.save = function () {
+        $scope.save = function() {
             if ($scope.lanes.length > 0) {
                 saveBoardWithLanes();
             } else {
@@ -75,50 +80,46 @@ angular.module('sb.board').controller('AddBoardController',
         /**
          * Close this modal without saving.
          */
-        $scope.close = function () {
+        $scope.close = function() {
             $modalInstance.dismiss('cancel');
-        };
-
-        /**
-         * Project typeahead search method.
-         */
-        $scope.searchProjects = function (value) {
-            return Project.browse({name: value, limit: 10}).$promise;
-        };
-
-        /**
-         * Formats the project name.
-         */
-        $scope.formatProjectName = function (model) {
-            if (!!model) {
-                return model.name;
-            }
-            return '';
-        };
-
-        /**
-         * Select a new project.
-         */
-        $scope.selectNewProject = function (model) {
-            $scope.board.project_id = model.id;
         };
 
         /**
          * Add a lane.
          */
-        $scope.addLane = function () {
+        $scope.addLane = function() {
             $scope.lanes.push(new Worklist({
                 title: '',
                 editing: true
             }));
         };
 
-        $scope.removeLane = function (worklist) {
-            var idx = $scope.lanes.indexOf(worklist);
+        /**
+         * Remove a lane.
+         */
+        $scope.removeLane = function(lane) {
+            var idx = $scope.lanes.indexOf(lane);
             $scope.lanes.splice(idx, 1);
         };
 
-        $scope.toggleEdit = function (worklist) {
-            worklist.editing = !worklist.editing;
+        /**
+         * Toggle editing of a lane title.
+         */
+        $scope.toggleEdit = function(lane) {
+            lane.editing = !lane.editing;
         };
+
+        /**
+         * Config for the lanes sortable.
+         */
+        $scope.lanesSortable = {
+            dragMove: BoardHelper.maybeScrollContainer('new-board')
+        };
+
+        // Create a blank Board to begin with.
+        $scope.lanes = [];
+        $scope.board = new Board({
+            title: '',
+            lanes: []
+        });
     });

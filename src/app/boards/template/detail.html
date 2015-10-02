@@ -78,11 +78,10 @@
                         Private
                     </label>
                     <div class="col-sm-10 checkbox">
-                        <!-- TODO(SotK): stylesheet sotk -->
                         <input id="private"
                                type="checkbox"
+                               class="modal-checkbox"
                                ng-model="board.private"
-                               style="margin-left: 0px;"
                                 />
                     </div>
                 </div>
@@ -118,7 +117,8 @@
 
 <!-- Template for the board's lanes with edit permissions -->
 <script type="text/ng-template" id="/inline/kanban_lanes.html">
-    <div class="kanban-board" as-sortable="lanesSortable" ng-model="board.worklists">
+    <div id="kanban-board" class="kanban-board"
+         as-sortable="lanesSortable" ng-model="board.worklists">
         <div class="kanban-lane" as-sortable-item ng-repeat="worklist in board.worklists">
             <div as-sortable-item-handle>
                 <span ng-if="!worklist.editing">

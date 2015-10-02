@@ -27,7 +27,7 @@ angular.module('sb.worklist').factory('NewWorklistService',
                     var modalInstance = $modal.open(
                         {
                             templateUrl: 'app/worklists/template/new.html',
-                            controller: 'WorklistModalController',
+                            controller: 'AddWorklistController',
                             resolve: {
                                 params: function () {
                                     return {

@@ -17,7 +17,7 @@
 /**
  * Controller for "delete worklist" modal
  */
-angular.module('sb.dashboard').controller('WorklistDeleteController',
+angular.module('sb.worklist').controller('WorklistDeleteController',
     function ($log, $scope, $state, worklist, $modalInstance) {
         'use strict';
 

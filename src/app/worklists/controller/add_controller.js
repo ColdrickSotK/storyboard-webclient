@@ -40,5 +40,44 @@ angular.module('sb.worklist').controller('AddWorklistController',
             $modalInstance.dismiss('cancel');
         };
 
-        $scope.worklist = new Worklist({title: ''});
+        $scope.setCriterion = function(tag) {
+            $scope.newCriterion.field = tag.type;
+            $scope.newCriterion.value = tag.value;
+            $scope.newCriterion.title = tag.title;
+        };
+
+        $scope.removeTag = function() {
+            $scope.newCriterion.field = null;
+            $scope.newCriterion.value = null;
+            $scope.newCriterion.title = null;
+        };
+
+        $scope.checkNewCriterion = function() {
+            if ($scope.newCriterion.field != null &&
+                $scope.newCriterion.value != null &&
+                $scope.newCriterion.title != null) {
+                return true;
+            }
+            return false;
+        };
+
+        $scope.remove = function(criterion) {
+            var idx = $scope.worklist.criteria.indexOf(criterion);
+            $scope.worklist.criteria.splice(idx, 1);
+        };
+
+        $scope.saveNewCriterion = function() {
+            var added = angular.copy($scope.newCriterion);
+            $scope.worklist.criteria.push(added);
+        };
+
+        $scope.worklist = new Worklist({title: '', criteria: []});
+        $scope.showAddCriterion = true;
+        $scope.newCriterion = {
+            type: 'Story',
+            negative: false,
+            field: null,
+            value: null,
+            title: null
+        };
     });

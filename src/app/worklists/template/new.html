@@ -50,6 +50,129 @@
                                     />
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="automatic" class="col-sm-2 control-label">
+                            Automatic
+                        </label>
+                        <div class="col-sm-10 checkbox">
+                            <input id="automatic"
+                                   type="checkbox"
+                                   class="modal-checkbox"
+                                   ng-model="worklist.automatic"
+                                    />
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="worklist.automatic">
+                        <div class="col-sm-8 col-sm-offset-2">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th colspan="2">
+                                        Match &nbsp;
+                                        <span class="dropdown" dropdown>
+                                            <a class="btn btn-xs btn-default dropdown-toggle"
+                                               dropdown-toggle>
+                                                Any
+                                                <i class="fa fa-caret-down"></i>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li ng-repeat="mode in ['Any', 'All']">
+                                                    <a href ng-click="setMode(mode)">{{mode}}</a>
+                                                </li>
+                                            </ul>
+                                        </span>
+                                        &nbsp; Criteria
+                                    </th>
+                                    <th class="text-right">
+                                        <small>
+                                            <a href
+                                               ng-click="showAddCriterion = !showAddCriterion">
+                                                <i class="fa fa-plus" ng-if="!showAddCriterion"></i>
+                                                <i class="fa fa-minus" ng-if="showAddCriterion"></i>
+                                                Add Criteria
+                                            </a>
+                                        </small>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="criterion in worklist.criteria">
+                                    <td colspan="2">
+                                        {{criterion.type == 'Story' ? 'Stories' : 'Tasks'}}
+                                        where
+                                        {{criterion.field | capitalize}}
+                                        {{criterion.negative ? 'is not' : 'is'}}
+                                        {{criterion.title}}
+                                    </td>
+                                    <td class="text-right">
+                                        <a href class="close"
+                                           ng-click="remove(criterion)">&times;</a>
+                                    </td>
+                                </tr>
+                                <tr ng-show="!worklist.criteria.length && !showAddCriterion">
+                                    <td colspan="3">No criteria defined yet.</td>
+                                </tr>
+                                <tr ng-show="showAddCriterion"
+                                    ng-controller="SearchCriteriaController"
+                                    ng-init="init(['Story'])">
+                                    <td class="center-vertical">
+                                        <span class="dropdown" dropdown>
+                                            <a class="btn btn-xs btn-default dropdown-toggle"
+                                               dropdown-toggle>
+                                                {{newCriterion.type == 'Story' ? 'Stories' : 'Tasks'}}
+                                                <i class="fa fa-caret-down"></i>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li ng-repeat="type in ['Story', 'Task']">
+                                                    <a href
+                                                       ng-click="newCriterion.type = type;
+                                                                 init([type])">
+                                                        {{type == 'Story' ? 'Stories' : 'Tasks'}}
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </span>
+                                        <span class="dropdown" dropdown>
+                                            <a class="btn btn-xs btn-default dropdown-toggle"
+                                               dropdown-toggle>
+                                                {{newCriterion.negative ? 'not matching' : 'matching'}}
+                                                <i class="fa fa-caret-down"></i>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li ng-repeat="not in [false, true]">
+                                                    <a href
+                                                       ng-click="newCriterion.negative = not">
+                                                        {{not ? 'not matching' : 'matching'}}
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </span>
+                                    </td>
+                                    <td class="center-vertical">
+                                        <div class="form-group has-feedback has-feedback-no-label">
+                                            <div tag-complete="criteria as criteria.title for criteria in searchForCriteria($viewValue)"
+                                                 tag-complete-tags="criteria"
+                                                 tag-complete-label-field="title"
+                                                 tag-complete-option-template-url="'app/search/template/typeahead_criteria_item.html'"
+                                                 tag-complete-tag-template-url="'app/search/template/criteria_tag_item.html'"
+                                                 tag-complete-loading="loadingCriteria = isLoading"
+                                                 tag-complete-on-select="setCriterion(tag)"
+                                                 tag-remove-callback="removeTag()"
+                                                 max-tags="1"
+                                                 placeholder="Click to select a filter.">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-right center-vertical">
+                                        <a href class="btn btn-primary"
+                                           ng-click="saveNewCriterion()"
+                                           ng-disabled="!checkNewCriterion()">Save</a>
+                                    </td>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </form>
             </div>
         </div>

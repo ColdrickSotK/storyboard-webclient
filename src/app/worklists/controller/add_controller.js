@@ -42,7 +42,7 @@ angular.module('sb.worklist').controller('AddWorklistController',
 
         $scope.setCriterion = function(tag) {
             $scope.newCriterion.field = tag.type;
-            $scope.newCriterion.value = tag.value;
+            $scope.newCriterion.value = tag.value.toString();
             $scope.newCriterion.title = tag.title;
         };
 

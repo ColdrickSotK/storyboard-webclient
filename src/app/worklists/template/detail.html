@@ -24,9 +24,9 @@
          ng-show="editing">
     </div>
     <hr ng-show="editing">
-    <div ng-show="permissions.editWorklist || permissions.moveItems"
+    <div ng-show="(permissions.editWorklist || permissions.moveItems) && !worklist.automatic"
          ng-include src="'/inline/worklist.html'"></div>
-    <div ng-show="!(permissions.editWorklist || permissions.moveItems)"
+    <div ng-show="!(permissions.editWorklist || permissions.moveItems) || worklist.automatic"
          ng-include src="'/inline/worklist_static.html'"></div>
 </div>
 

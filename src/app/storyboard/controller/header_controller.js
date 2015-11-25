@@ -22,7 +22,7 @@ angular.module('storyboard').controller('HeaderController',
     function ($q, $scope, $rootScope, $state, $modal, NewStoryService,
               Session, SessionState, CurrentUser, Criteria, Notification,
               Priority, Project, Story, ProjectGroup, NewWorklistService,
-              NewBoardService) {
+              NewBoardService, SessionModalService) {
         'use strict';
 
         function resolveCurrentUser() {
@@ -101,6 +101,13 @@ angular.module('storyboard').controller('HeaderController',
                         {id: projectGroup.id}
                     );
                 });
+        };
+
+        /**
+         * Show modal informing the user login is required.
+         */
+        $scope.showLoginRequiredModal = function() {
+            SessionModalService.showLoginRequiredModal();
         };
 
         /**

@@ -39,7 +39,7 @@
 
         <ul class="nav navbar-nav">
             <li>&nbsp;&nbsp;</li>
-            <li class="dropdown" dropdown>
+            <li class="dropdown" dropdown ng-show="isLoggedIn">
                 <button type="button"
                         class="btn btn-primary navbar-btn dropdown-toggle"
                         dropdown-toggle>
@@ -47,7 +47,7 @@
                     Create New...
                     <i class="fa fa-caret-down"></i>
                 </button>
-                <ul class="dropdown-menu" ng-show="isLoggedIn">
+                <ul class="dropdown-menu">
                     <li>
                         <a href ng-click="newStory()">
                             Story
@@ -74,6 +74,15 @@
                         </a>
                     </li>
                 </ul>
+            </li>
+            <li ng-show="!isLoggedIn">
+                <button type="button"
+                        class="btn btn-primary navbar-btn dropdown-toggle"
+                        ng-click="showLoginRequiredModal()">
+                    <i class="fa fa-plus-circle"></i>
+                    Create New...
+                    <i class="fa fa-caret-down"></i>
+                </button>
             </li>
         </ul>
 
@@ -148,15 +157,24 @@
             </a>
             <button type="button"
                     ng-click="showMobileNewMenu = !showMobileNewMenu"
-                    class="btn btn-sm btn-primary navbar-btn">
+                    class="btn btn-sm btn-primary navbar-btn"
+                    ng-show="isLoggedIn">
                 <i class="fa fa-plus-circle"></i>
                 Create New...
+            </button>
+            <button type="button"
+                    class="btn btn-primary navbar-btn dropdown-toggle"
+                    ng-click="showLoginRequiredModal()"
+                    ng-show="!isLoggedIn">
+                <i class="fa fa-plus-circle"></i>
+                Create New...
+                <i class="fa fa-caret-down"></i>
             </button>
             <a class="navbar-brand" href="#!/">StoryBoard</a>
         </div>
 
         <div collapse="!showMobileNewMenu" id="mobile-new-menu">
-            <ul class="nav navbar-nav" ng-show="isLoggedIn">
+            <ul class="nav navbar-nav">
                 <li>
                     <a href ng-click="newStory()">
                         Story

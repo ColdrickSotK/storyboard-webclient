@@ -34,21 +34,58 @@
 <!-- Template for the header and description -->
 <script type="text/ng-template" id="/inline/board_detail.html">
     <div class="row">
-        <div class="col-sm-12">
-            <h1 class="no-margin-bottom" view-title>
-                {{board.title}}
-                <small>
-                    <a ng-click="toggleEditMode()"
-                       ng-show="permissions.editBoard">
-                        <i class="fa fa-pencil"></i>
-                    </a>
-                </small>
-            </h1>
+        <div class="col-sm-8">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h1 class="no-margin-bottom" view-title>
+                        {{board.title}}
+                        <small>
+                            <a ng-click="toggleEditMode()"
+                               ng-show="permissions.editBoard">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                        </small>
+                    </h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <insert-markdown ng-if="board.description"
+                                     content="board.description">
+                    </insert-markdown>
+                </div>
+            </div>
         </div>
-        <div class="col-sm-12">
-            <insert-markdown ng-if="board.description"
-                             content="board.description">
-            </insert-markdown>
+        <div class="col-sm-4" style="margin-top: 20px">
+            <small>
+            <table class="table table-fixed table-striped table-condensed">
+            <thead>
+            <tr><th colspan="3">Target Dates</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Planning for thing</td>
+                    <td>6 March 2016</td>
+                    <td>15 cards</td>
+                </tr>
+                <tr>
+                    <td>Deliver demo</td>
+                    <td>4 April 2016</td>
+                    <td>10 cards</td>
+                </tr>
+                <tr>
+                    <td>Deliver feature</td>
+                    <td>10 April 2016</td>
+                    <td>15 cards</td>
+                </tr>
+                <tr>
+                    <td>Final deadline</td>
+                    <td>17 April 2016</td>
+                    <td>10 cards</td>
+                </tr>
+            </tbody>
+            </table>
+            </small>
         </div>
     </div>
 </script>

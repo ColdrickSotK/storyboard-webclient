@@ -16,31 +16,67 @@
 <div as-sortable="cardsSortable"
      ng-model="lane.worklist.items"
      class="kanban-lane-contents">
-    <div class="kanban-card"
+    <div class="kanban-card kanban-card-due kanban-card-late"
          as-sortable-item
          ng-repeat="item in lane.worklist.items"
          ng-switch="item.item_type">
         <div as-sortable-item-handle ng-switch-when="story">
+            <!--
             <button type="button" class="close" title="Remove"
                     ng-click="removeCard(lane.worklist, item)">
                 &times;
             </button>
-            <i class="fa fa-sb-story text-muted"></i>
-            <a href="#!/story/{{item.story.id}}">
-                {{item.story.title}}
-            </a>
+            -->
+            <div class="row">
+                <div class="col-xs-1">
+                    <i class="fa fa-sb-story text-muted"></i>
+                </div>
+                <div class="col-xs-10">
+                    <button type="button" class="close" title="Remove"
+                            ng-click="removeCard(lane.worklist, item)">
+                        &times;
+                    </button>
+                    <a href="#!/story/{{item.story.id}}">
+                        {{item.story.title}}
+                    </a>
+                </div>
+            </div>
         </div>
         <div as-sortable-item-handle ng-switch-when="task">
-            <button type="button" class="close" title="Remove"
-                    ng-click="removeCard(lane.worklist, item)">
-                &times;
-            </button>
-            <i class="fa fa-tasks text-muted"></i>
-            <a href="#!/story/{{item.task.story_id}}">
-                {{item.task.title}}
-            </a>
+            <div class="row">
+                <div class="col-xs-1">
+                    <i class="fa fa-tasks text-muted"></i>
+                </div>
+                <div class="col-xs-10">
+                    <button type="button" class="close" title="Remove"
+                            ng-click="removeCard(lane.worklist, item)">
+                        &times;
+                    </button>
+                    <a href="#!/story/{{item.task.story_id}}">
+                        {{item.task.title}}
+                    </a>
+                </div>
+                <!---
+                <div class="col-xs-1 text-right">
+                    <button type="button" class="close" title="Remove"
+                            ng-click="removeCard(lane.worklist, item)">
+                        &times;
+                    </button>
+                </div>
+                -->
+            </div>
+            <div class="row">
+            <div class="target-date">
+                <i class="fa fa-clock-o text-muted"></i>
+                &nbsp;&nbsp;Deliver demo - Apr 4
+            </div>
+            </div>
+            <div class="row">
+            <div class="col-xs-12">
             <user-typeahead ng-show="item.task.assignee_id"
                 ng-model="item.task.assignee_id"/>
+            </div>
+            </div>
         </div>
     </div>
 </div>

@@ -152,6 +152,8 @@ angular.module('sb.board').controller('CardDetailController',
         if (card.item_type === 'task') {
             $scope.story = Story.get({id: card.task.story_id});
             $scope.getRelevantDueDates(card.task.due_dates);
+        } else if (card.item_type === 'story') {
+            $scope.story = card.story;
         }
 
         angular.forEach(board.due_dates, function(date) {

@@ -255,3 +255,20 @@
         }
     }
 }
+
+.due-date-modal {
+    & .nav-tabs {
+        margin-bottom: 10px;
+    }
+
+    & .table-hover {
+        & tr:hover {
+            background-color: #efefef;
+            cursor: pointer;
+        }
+        & tr.selected {
+            background-color: @brand-primary;
+            color: @navbar-default-color;
+        }
+    }
+}

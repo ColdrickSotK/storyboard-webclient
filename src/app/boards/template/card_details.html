@@ -45,31 +45,35 @@
                             &nbsp;Edit description
                         </a>
                     </li>
-                    <li>
+                    <li ng-if="card.item_type == 'task'">
                         <a href ng-click="toggleEditDueDate()">
                             <i class="fa fa-clock-o"></i>
                             &nbsp;Edit due date
                         </a>
                     </li>
-                    <li>
+                    <li ng-if="card.item_type == 'task'">
                         <a href ng-click="toggleAssigneeTypeahead()">
                             <i class="fa fa-user"></i>
                             &nbsp;Edit assignee
                         </a>
                     </li>
+                    <!--
                     <li role="separator" class="divider"></li>
                     <li>
                         <a href ng-click="deleteCard()">
                             <i class="fa fa-trash"></i>
                             &nbsp;Delete card
                         </a>
-                    </li>
+                    </li>-->
                 </ul>
             </span>
         </h3>
     </div>
     <div ng-if="card.item_type == 'task'"
          ng-include src="'/inline/task_body.html'">
+    </div>
+    <div ng-if="card.item_type == 'story'"
+         ng-include src="'/inline/story_body.html'">
     </div>
 </div>
 
@@ -322,3 +326,70 @@
 </script>
 
 
+<script type="text/ng-template" id="/inline/story_body.html">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-12 card-heading">
+                <h2>
+                    <i class="fa fa-sb-story"></i>
+                    {{card.story.title}}
+                </h2>
+            </div>
+        </div>
+        <div class="row card-detail">
+            <div class="col-xs-12 item-heading">
+                <label>
+                    Story description
+                    (<a href
+                        ng-click="showDescription = !showDescription"
+                        >{{showDescription ? 'hide' : 'show'}}</a>)
+                </label>
+            </div>
+            <div class="col-xs-12 card-detail-item" ng-show="showDescription"
+                 ng-click="toggleEditDescription()"
+                 ng-class="{'editing': editingDescription}">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <insert-markdown content="story.description"
+                                         ng-show="!editingDescription || previewDescription">
+                        </insert-markdown>
+                    </div>
+                </div>
+                <div class="row" ng-show="editingDescription">
+                    <div class="col-xs-12">
+                        <textarea placeholder="Enter a story description here"
+                                  class="form-control context-edit"
+                                  msd-elastic
+                                  rows="3"
+                                  required
+                                  focus-on-show
+                                  ng-disabled="isUpdating"
+                                  ng-model="story.description"
+                                  ng-show="editingDescription"
+                                  ng-click="$event.stopPropagation()">
+                        </textarea>
+                    </div>
+                </div>
+                <div class="row" ng-show="editingDescription"
+                     ng-click="$event.stopPropagation()">
+                    <div class="col-xs-6">
+                        <button class="btn btn-primary" type="button"
+                                ng-click="previewDescription = !previewDescription">
+                            Preview
+                        </button>
+                    </div>
+                    <div class="col-xs-6 text-right">
+                        <button class="btn btn-primary" type="button"
+                                ng-click="editStoryDescription()">
+                            Save
+                        </button>
+                        <button class="btn btn-default" type="button"
+                                ng-click="toggleEditDescription()">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

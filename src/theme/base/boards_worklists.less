@@ -14,6 +14,7 @@
  * under the License.
  */
 
+
 /**
  *  Board and worklist styles.
  */
@@ -128,20 +129,26 @@
 }
 
 .kanban-card-due {
-/*    border-left: 10px solid #555;*/
+    border-right: @border-radius-base solid #555;
+    & .target-date {
+        font-weight: bold;
+    }
 }
 
 .kanban-card-late {
     border-right: @border-radius-base solid #555;
-    > div > div > div.target-date {
+    & .target-date {
         font-weight: bold;
         color: @navbar-default-color;
         background-color: @brand-primary;
-        border-radius: 10px; 
-        padding: 0px 5px;
-        margin: 0px 15px;
+        border-radius: 10px;
+        margin: 0px;
 
-        > i.text-muted {
+        & .col-xs-1, & .col-xs-11 {
+            padding: 0px 5px;
+        }
+
+        & .text-muted {
             color: @navbar-default-color;
         }
     }
@@ -160,6 +167,10 @@
     width: 100vw;
     &:hover {
         cursor: pointer;
+        a {
+            color: darken(@brand-primary, 10%);
+            text-decoration: underline;
+        }
     }
 }
 
@@ -180,4 +191,67 @@
     border-radius: 4px;
     box-sizing: border-box;
     background-color: #999;
+}
+
+/* Card modal style */
+
+.card-modal h2 {
+    margin-top: 0px;
+}
+
+.card-heading {
+    margin-bottom: 20px;
+}
+
+.card-detail {
+    margin-left: 15px;
+    margin-right: 15px;
+
+    & div.item-heading > label {
+        margin-left: -10px;
+    }
+
+    & label {
+        margin-bottom: 0px;
+    }
+};
+
+/* TODO: declare this somewhere it can be overridden */
+@card-detail-item-hover: #f6f6f6;
+
+.card-detail-item {
+    border-radius: @border-radius-base;
+    padding: 10px 15px;
+    &:hover {
+        background-color: @card-detail-item-hover;
+        cursor: pointer;
+    }
+
+    & p:last-child {
+        margin-bottom: 0px;
+    }
+
+    & user-typeahead .form-group {
+        margin-bottom: 0px;
+        margin-top: 0px;
+        & .form-control-static {
+            padding: 0px;
+        }
+    }
+
+    &.editing {
+        background-color: @card-detail-item-hover;
+    }
+
+    & .dropdown-menu {
+        margin-bottom: 30px;
+    }
+
+    & .row {
+        margin-bottom: 5px;
+
+        &:last-child {
+            margin-bottom: 0px;
+        }
+    }
 }

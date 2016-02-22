@@ -35,7 +35,7 @@
                 </div>
                 <div class="col-xs-10">
                     <button type="button" class="close" title="Remove"
-                            ng-click="removeCard(lane.worklist, item)">
+                            ng-click="removeCard(lane.worklist, item); $event.stopPropagation();">
                         &times;
                     </button>
                     <a>
@@ -51,7 +51,7 @@
                 </div>
                 <div class="col-xs-10">
                     <button type="button" class="close" title="Remove"
-                            ng-click="removeCard(lane.worklist, item)">
+                            ng-click="removeCard(lane.worklist, item); $event.stopPropagation()">
                         &times;
                     </button>
                     <a>

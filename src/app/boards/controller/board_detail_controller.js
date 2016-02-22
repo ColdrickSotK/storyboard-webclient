@@ -378,6 +378,9 @@ angular.module('sb.board').controller('BoardDetailController',
                     },
                     board: function() {
                         return $scope.board;
+                    },
+                    permissions: function() {
+                        return $scope.permissions;
                     }
                 }
             });

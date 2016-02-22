@@ -18,8 +18,8 @@
  * Controller for the card detail modal.
  */
 angular.module('sb.board').controller('CardDetailController',
-    function ($scope, card, board, Story, Task, DueDate, Worklist,
-              $document, $timeout, $modalInstance) {
+    function ($scope, card, board, permissions, Story, Task, DueDate,
+              Worklist, $document, $timeout, $modalInstance, $modal) {
         'use strict';
 
         /**
@@ -65,7 +65,9 @@ angular.module('sb.board').controller('CardDetailController',
         };
 
         $scope.toggleEditDueDate = function() {
-            $scope.editingDueDate = !$scope.editingDueDate;
+            if (permissions.moveCards || permissions.editBoard) {
+                $scope.editingDueDate = !$scope.editingDueDate;
+            }
         };
 
         $scope.toggleAssignDueDate = function() {
@@ -149,6 +151,26 @@ angular.module('sb.board').controller('CardDetailController',
             $modalInstance.close('closed');
         };
 
+
+        $scope.newDueDate = function() {
+            var modalInstance = $modal.open({
+                templateUrl: 'app/due_dates/template/new.html',
+                controller: 'DueDateNewController',
+                resolve: {
+                    board: function() {
+                        return board;
+                    }
+                }
+            });
+
+            modalInstance.result.finally(function() {
+                if (card.item_type === 'task') {
+                    $scope.getRelevantDueDates(card.task.due_dates);
+                }
+            });
+        };
+
+
         if (card.item_type === 'task') {
             $scope.story = Story.get({id: card.task.story_id});
             $scope.getRelevantDueDates(card.task.due_dates);
@@ -162,6 +184,7 @@ angular.module('sb.board').controller('CardDetailController',
 
         $scope.card = card;
         $scope.board = board;
+        $scope.permissions = permissions;
         $scope.showDescription = true;
         $scope.assigningDueDate = false;
         $scope.editingDueDate = false;

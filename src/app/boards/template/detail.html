@@ -91,7 +91,8 @@
                         </a>
                     </td>
                 </tr>
-                <tr class="hover-row" ng-click="newDueDate()">
+                <tr class="hover-row" ng-click="newDueDate()"
+                    ng-if="permissions.moveCards || permissions.editBoard">
                     <td colspan="5" class="text-center">
                         <a href>
                             <i class="fa fa-plus-circle"></i>
